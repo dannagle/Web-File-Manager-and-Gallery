@@ -203,6 +203,8 @@ if(stripos($theme, "random") !== false)
     $choosetheme = abs(($themeseed + date('j')) % (count($themes)));
 
     $theme = $themes[$choosetheme];
+} else {
+    $choosetheme = array_search($theme, $themes);
 }
 
 
