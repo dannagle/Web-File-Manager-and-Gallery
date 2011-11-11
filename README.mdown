@@ -31,14 +31,6 @@ Rather than using the contact page on Ultrose.com, please open issues using GitH
 
 You add content to the blogging portion Ultrose by adding to the `content[]` variable directly in the PHP file. There are various features you can turn on and off that are listed at the top of the file. Everything you need is commented in the code. Eventually, I may write official documentation, but that is not planned for right now.  
 
-GreenDroid has been designed for Android 1.6 and greater. It may work on Android 1.5 but I don't want to provide support for this platform as it's way too old ... It has been developed using the following software:
-
-  * Eclipse IDE 3.6
-  * Android SDK 4 (android-4)
-  * Android Development Tools (ADT) 8.0.1
-
-Go the [Android Developers website][android_developers_website] for complete installation instructions.
-
 ##Credits
 
 Copyright © [Dan Nagle][personal_site] 
