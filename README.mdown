@@ -33,7 +33,7 @@ You add content to the blogging portion Ultrose by adding to the `content[]` var
 
 ##Credits
 
-Copyright © [Dan Nagle][personal_site] 
+Copyright (c) 2011 [Dan Nagle][personal_site] 
 
 [ultrose_website]: http://ultrose.com
 [personal_site]: http://dannagle.com
