@@ -530,67 +530,161 @@ body, html {
     margin:0 auto;
 }
 
+<?php
 
-#wrap, #doublewrap
-{
-    background-color:  
-   <?php
-    //My own personal tweaking... 
-    switch ($theme) {
-        case "ui-lightness": echo "#EEEEEE;";break;
-        case "sunny": echo "#FEEEBD;";break;
-        case "ui-darkness": echo "#252525;";break;
-        case "redmond": echo "#edf3f3;";break;
-        case "overcast": echo "#C9C9C9;";break;
-        case "le-frog": echo "#285C00;";break;
-        case "flick": echo "#eeeeee;";break;
-        case "pepper-grinder": echo "#ECEADF;";break;
-        case "eggplant": echo "#3D3644;";break;
-        case "cupertino": echo "#F2F5F7;";break;
-        case "dark-hive": echo "#3c3c3c;";break;
-        case "south-street": echo "#eeebd5;";break;
-        case "blitzer": echo "#eeebd5;";break;
-        case "humanity": echo "#F4F0EC;";break;
-        case "hot-sneaks": echo "#e6e9ec;";break;
-        case "excite-bike": echo "#EEEEEE;";break;
-        case "vader": echo "#121212;";break;
-        case "dot-luv": echo "#2c2c2c;";break;
-        case "mint-choc": echo "#3d2f25;";break;
-        case "black-tie": echo "#e6e6e6;";break;
-        case "trontastic": echo "#1e3c00;";break;
-        case "swanky-purse": echo "#443113;";break;
-        default: echo "#FFFFFF;";break;
-    }
+//My own personal tweaking... 
 
-    echo "\ncolor:";
+$colortweakwrapbg = "#FFFFFF;";
+$colortweakwrapcolor = "#FFFFFF;";
+$colortweakmainbg =  "#FFFFFF;";
+$colortweakbodybg =  "#000000;";
+
     switch ($theme) {
-        case "ui-lightness": echo "#333333;";break;
-        case "sunny": echo "#383838;";break;
-        case "ui-darkness": echo "#FFFFFF;";break;
-        case "redmond": echo "#222222;";break;
-        case "overcast": echo "#333333;";break;
-        case "le-frog": echo "#FFFFFF;";break;
-        case "flick": echo "#444444;";break;
-        case "pepper-grinder": echo "#1F1F1F;";break;
-        case "eggplant": echo "#FFFFFF;";break;
-        case "cupertino": echo "#362B36;";break;
-        case "dark-hive": echo "#FFFFFF;";break;
-        case "south-street": echo "#312E25;";break;
-        case "blitzer": echo "#333333;";break;
-        case "humanity": echo "#1E1B1D;";break;
-        case "hot-sneaks": echo "#2C4359;";break;
-        case "excite-bike": echo "#222222;";break;
-        case "vader": echo "#EEEEEE;";break;
-        case "dot-luv": echo "#D9D9D9;";break;
-        case "mint-choc": echo "#FFFFFF;";break;
-        case "black-tie": echo "#222222;";break;
-        case "trontastic": echo "#FFFFFF;";break;
-        case "swanky-purse": echo "#EFEC9F;";break;
-        default: echo "#FFFFFF;";break;
+        case "ui-lightness":
+            $colortweakwrapbg = "#EEEEEE;";
+            $colortweakwrapcolor = "#333333;";
+            $colortweakmainbg =  "#FFFFFF;";
+            $colortweakbodybg =  "#924400;";
+            break;
+        case "sunny":
+            $colortweakwrapbg = "#FEEEBD;";
+            $colortweakwrapcolor = "#383838;";
+            $colortweakmainbg =  "#FFFFD1;";
+            $colortweakbodybg =  "#1D1401;";
+            break;
+        case "ui-darkness":
+            $colortweakwrapbg = "#252525;";
+            $colortweakwrapcolor = "#FFFFFF;";
+            $colortweakmainbg =  "#303030;";
+            $colortweakbodybg =  "#000000;";
+            break;
+        case "redmond":
+            $colortweakwrapbg = "#edf3f3;";
+            $colortweakwrapcolor = "#222222;";
+            $colortweakmainbg =  "#FFFFFF;";
+            $colortweakbodybg =  "#003868;";
+            break;
+        case "overcast":
+            $colortweakwrapbg = "#C9C9C9;";
+            $colortweakwrapcolor = "#333333;";
+            $colortweakmainbg =  "#DDDDDD;";
+            $colortweakbodybg =  "#797979;";
+            break;
+        case "le-frog":
+            $colortweakwrapbg = "#285C00;";
+            $colortweakwrapcolor = "#FFFFFF;";
+            $colortweakmainbg =  "#3C7014;";
+            $colortweakbodybg =  "#001D00;";
+            break;
+        case "flick":
+            $colortweakwrapbg = "#eeeeee;";
+            $colortweakwrapcolor = "#444444;";
+            $colortweakmainbg =  "#FFFFFF;";
+            $colortweakbodybg =  "#797979;";
+            break;
+        case "pepper-grinder":
+            $colortweakwrapbg = "#ECEADF;";
+            $colortweakwrapcolor = "#1F1F1F;";
+            $colortweakmainbg =  "#FFFEF3;";
+            $colortweakbodybg =  "#9B9B9B;";
+            break;
+        case "eggplant":
+            $colortweakwrapbg = "#3D3644;";
+            $colortweakwrapcolor = "#FFFFFF;";
+            $colortweakmainbg =  "#514A58;";
+            $colortweakbodybg =  "#000000;";
+            break;
+        case "cupertino":
+            $colortweakwrapbg = "#F2F5F7;";
+            $colortweakwrapcolor = "#362B36;";
+            $colortweakmainbg =  "#FFFFFF;";
+            $colortweakbodybg =  "#7A8993;";
+            break;
+        case "dark-hive":
+            $colortweakwrapbg = "#3c3c3c;";
+            $colortweakwrapcolor = "#FFFFFF;";
+            $colortweakmainbg =  "#141414;";
+            $colortweakbodybg =  "#000000;";
+            break;
+        case "south-street":
+            $colortweakwrapbg = "#eeebd5;";
+            $colortweakwrapcolor = "#312E25;";
+            $colortweakmainbg =  "#FFFFF9;";
+            $colortweakbodybg =  "#888476;";
+            break;
+        case "blitzer":
+            $colortweakwrapbg = "#eeebd5;";
+            $colortweakwrapcolor = "#333333;";
+            $colortweakmainbg =  "#FFFFFF;";
+            $colortweakbodybg =  "#680000;";
+            break;
+        case "humanity":
+            $colortweakwrapbg = "#F4F0EC;";
+            $colortweakwrapcolor = "#1E1B1D;";
+            $colortweakmainbg =  "#FFFFFF;";
+            $colortweakbodybg =  "#672000;";
+            break;
+        case "hot-sneaks":
+            $colortweakwrapbg = "#e6e9ec;";
+            $colortweakwrapcolor = "#2C4359;";
+            $colortweakmainbg =  "#FFFFFF;";
+            $colortweakbodybg =  "#000000;";
+            break;
+        case "excite-bike":
+            $colortweakwrapbg = "#EEEEEE;";
+            $colortweakwrapcolor = "#222222;";
+            $colortweakmainbg =  "#FFFFFF;";
+            $colortweakbodybg =  "#959595;";
+            break;
+        case "vader":
+            $colortweakwrapbg = "#121212;";
+            $colortweakwrapcolor = "#EEEEEE;";
+            $colortweakmainbg =  "#262626;";
+            $colortweakbodybg =  "#242424;";
+            break;
+        case "dot-luv":
+            $colortweakwrapbg = "#2c2c2c;";
+            $colortweakwrapcolor = "#D9D9D9;";
+            $colortweakmainbg =  "#252525;";
+            $colortweakbodybg =  "#000000;";
+            break;
+        case "mint-choc":
+            $colortweakwrapbg = "#3d2f25;";
+            $colortweakwrapcolor = "#FFFFFF;";
+            $colortweakmainbg =  "#342D27;";
+            $colortweakbodybg =  "#000000;";
+            break;
+        case "black-tie":
+            $colortweakwrapbg = "#e6e6e6;";
+            $colortweakwrapcolor = "#222222;";
+            $colortweakmainbg =  "#FFFFFF;";
+            $colortweakbodybg =  "#000000;";
+            break;
+        case "trontastic":
+            $colortweakwrapbg = "#1e3c00;";
+            $colortweakwrapcolor = "#FFFFFF;";
+            $colortweakmainbg =  "#2b5500;";
+            $colortweakbodybg =  "#3B7600;";
+            break;
+        case "swanky-purse":
+            $colortweakwrapbg = "#443113;";
+            $colortweakwrapcolor = "#EFEC9F;";
+            $colortweakmainbg =  "#584527;";
+            $colortweakbodybg =  "#584527;";
+            break;
+        default:
+            $colortweakwrapbg = "#FFFFFF;";
+            $colortweakwrapcolor = "#FFFFFF;";
+            $colortweakmainbg =  "#FFFFFF;";
+            $colortweakbodybg =  "#000000;";
+            break;
     }
 
 ?>
-
+#wrap, #doublewrap
+{
+    background-color:  <?php echo $colortweakwrapbg;?>;
+    color:  <?php echo $colortweakwrapcolor;?>;
 }
 
 
@@ -598,33 +692,7 @@ a
 {
 
 <?php
-    echo "\ncolor:";
-    switch ($theme) {
-        case "ui-lightness": echo "#333333;";break;
-        case "sunny": echo "#383838;";break;
-        case "ui-darkness": echo "#FFFFFF;";break;
-        case "redmond": echo "#222222;";break;
-        case "overcast": echo "#333333;";break;
-        case "le-frog": echo "#FFFFFF;";break;
-        case "flick": echo "#444444;";break;
-        case "pepper-grinder": echo "#1F1F1F;";break;
-        case "eggplant": echo "#FFFFFF;";break;
-        case "cupertino": echo "#362B36;";break;
-        case "dark-hive": echo "#FFFFFF;";break;
-        case "south-street": echo "#312E25;";break;
-        case "blitzer": echo "#333333;";break;
-        case "humanity": echo "#1E1B1D;";break;
-        case "hot-sneaks": echo "#2C4359;";break;
-        case "excite-bike": echo "#222222;";break;
-        case "vader": echo "#EEEEEE;";break;
-        case "dot-luv": echo "#D9D9D9;";break;
-        case "mint-choc": echo "#FFFFFF;";break;
-        case "black-tie": echo "#222222;";break;
-        case "trontastic": echo "#FFFFFF;";break;
-        case "swanky-purse": echo "#EFEC9F;";break;
-        default: echo "#FFFFFF;";break;
-    }
-
+    echo "\ncolor: $colortweakwrapcolor";
 ?>
 
 }
@@ -655,75 +723,15 @@ h1 {
     float:left;
     width:680px;
     padding:10px;
-    background-color: 
-
-<?php
-    //My own personal tweaking... 
-
-    switch ($theme) {
-        case "ui-lightness": echo "#FFFFFF;";break;
-        case "sunny": echo "#FFFFD1;";break;
-        case "ui-darkness": echo "#303030;";break;
-        case "redmond": echo "#FFFFFF;";break;
-        case "overcast": echo "#DDDDDD;";break;
-        case "le-frog": echo "#3C7014;";break;
-        case "flick": echo "#FFFFFF;";break;
-        case "pepper-grinder": echo "#FFFEF3;";break;
-        case "eggplant": echo "#514A58;";break;
-        case "cupertino": echo "#FFFFFF;";break;
-        case "dark-hive": echo "#141414;";break;
-        case "south-street": echo "#FFFFF9;";break;
-        case "blitzer": echo "#FFFFFF;";break;
-        case "humanity": echo "#FFFFFF;";break;
-        case "hot-sneaks": echo "#FFFFFF;";break;
-        case "excite-bike": echo "#FFFFFF;";break;
-        case "vader": echo "#262626;";break;
-        case "dot-luv": echo "#252525;";break;
-        case "mint-choc": echo "#342D27;";break;
-        case "black-tie": echo "#FFFFFF;";break;
-        case "trontastic": echo "#2b5500;";break;
-        case "swanky-purse": echo "#584527;";break;
-        default: echo "#FFFFFF;";break;
-    }
-
-
-?>
+    background-color: <?php echo $colortweakmainbg;?>;
 }
 
 html, body
 {
-background-color:
-<?php
-    //My own personal tweaking... 
-
-    switch ($theme) {
-        case "ui-lightness": echo "#924400;";break;
-        case "sunny": echo "#1D1401;";break;
-        case "ui-darkness": echo "#000000;";break;
-        case "redmond": echo "#003868;";break;
-        case "overcast": echo "#797979;";break;
-        case "le-frog": echo "#001D00;";break;
-        case "flick": echo "#797979;";break;
-        case "pepper-grinder": echo "#9B9B9B;";break;
-        case "eggplant": echo "#000000;";break;
-        case "cupertino": echo "#7A8993;";break;
-        case "dark-hive": echo "#000000;";break;
-        case "south-street": echo "#888476;";break;
-        case "blitzer": echo "#680000;";break;
-        case "humanity": echo "#672000;";break;
-        case "hot-sneaks": echo "#000000;";break;
-        case "excite-bike": echo "#959595;";break;
-        case "vader": echo "#242424;";break;
-        case "dot-luv": echo "#00000B;";break;
-        case "mint-choc": echo "#000000;";break;
-        case "black-tie": echo "#000000;";break;
-        case "trontastic": echo "#3B7600;";break;
-        case "swanky-purse": echo "#584527;";break;
-        default: echo "#000000;";break;
-    }
-
-
-?>
+    margin:0;
+    padding:0;
+    color:#000;
+    background-color: <?php echo $colortweakbodybg;?>;
 
 }
 
