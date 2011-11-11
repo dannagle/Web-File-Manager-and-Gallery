@@ -29,7 +29,7 @@ Rather than using the contact page on Ultrose.com, please open issues using GitH
 
 ##Documentation
 
-You add content to the blogging portion Ultrose by adding to the `content[]` variable directly in the PHP file. There are various features you can turn on and off that are listed at the top of the file. Everything you need is commented in the code. Eventually, I may write official documentation, but that is not planned for right now.  
+You add content to the blogging portion Ultrose by adding to the `$content[]` variable directly in the PHP file. There are various features you can turn on and off that are listed at the top of the file. Everything you need is commented in the code. Eventually, I may write official documentation, but that is not planned for right now.  
 
 ##Credits
 
