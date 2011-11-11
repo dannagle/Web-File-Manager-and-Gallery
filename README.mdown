@@ -1,0 +1,47 @@
+#Ultrose
+ 
+[Ultrose][ultrose_website] is the ultimate one-file web manager. As a zero-install single file under 50 KB, you get:
+
+* 22 Custom themes to choose from (including "random")
+ * Emailer (with custom "From" address)
+ * RSS
+ * File Browser
+ * Full blogging system:
+   * Permalinks
+   * Search
+   * Primary Links
+   * Categories
+   * Pagination
+   * Administration
+   * File Manager (upload, delete, move)
+ * Google Analytics
+ * No database required. No other files beyond index.php required!
+ * Facebook integration
+
+##Installtion
+
+The only file you need `index.php`. Just drop it in a web server that supports PHP5+, and you are good to go! The jQuery libraries it uses are hosted by Google's public hosting services. 
+
+
+##Contact
+
+Rather than using the contact page on Ultrose.com, please open issues using GitHub. I don't have time for individual support, but I'll try to look at issue tickets as they appear. This project is considered feature complete for now.
+
+##Documentation
+
+You add content to the blogging portion Ultrose by adding to the `content[]` variable directly in the PHP file. There are various features you can turn on and off that are listed at the top of the file. Everything you need is commented in the code. Eventually, I may write official documentation, but that is not planned for right now.  
+
+GreenDroid has been designed for Android 1.6 and greater. It may work on Android 1.5 but I don't want to provide support for this platform as it's way too old ... It has been developed using the following software:
+
+  * Eclipse IDE 3.6
+  * Android SDK 4 (android-4)
+  * Android Development Tools (ADT) 8.0.1
+
+Go the [Android Developers website][android_developers_website] for complete installation instructions.
+
+##Credits
+
+Copyright © [Dan Nagle][personal_site] 
+
+[ultrose_website]: http://ultrose.com
+[personal_site]: http://dannagle.com

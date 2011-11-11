@@ -1,26 +1,43 @@
 <?php
-
 /*
 
+Installation:
+
 1. Save this file.
-2. Rename to index.php
-3. Upload to your web server.
-4. You are finished!
+2. Upload to your web server.
 
 */
-
 
 $enableLogin = 1; //set to 0 to secure your site.
 
 /*
 Ultrose is copyright and wholly owned by Dan Nagle (http://dannagle.com/).
-It is Dual-Licensed under GPLv3 or Commercial.
-
-Commercial licenses range from removing GPL to full OEM (removing copyright).
-See Ultrose.com for details: http://ultrose.com/
+It is Dual-Licensed under GPLv3 or MIT.
 
 
-If you did not purchase a commercial license, then this software is GPLv3.
+===========================MIT LICENSE================================================
+
+Copyright (c) 2011 Dan Nagle (http://dannagle.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this
+software and associated documentation files (the "Software"), to deal in the Software
+without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be included in all copies
+or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+===========================GPLv3================================================
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -36,7 +53,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
     
 
-Since this is one file, for brevity, the GPL text is not included.
+For brevity, the GPL text is not included.
 You may look here for the text: http://www.gnu.org/licenses/gpl-3.0.txt
 
 
@@ -55,9 +72,9 @@ $password = "password";
 $copyright = $yourname; 
 
 //Choose your theme from the list (further) below.
-$theme = "pepper-grinder";
+//$theme = "pepper-grinder";
 //uncomment to daily rotate the available themes.
-//$theme = "random";
+$theme = "random";
 
 //I recommend you put a real base url instead of using my calculation
 //Use a trailing slash if needed.
@@ -106,7 +123,7 @@ $enableFileBrowser = 1; //set to 0 to disable.
 $enableThemeRotate = 1; //set to 0 to disable.
 $enableFacebookLike = 1; //set to 0 to disable.
 $enableTwitter = 1; //set to 0 to disable. 
-$twitterAccount = "NagleCode"; //put your twitter account here.
+$twitterAccount = ""; //put your twitter account here.
 
 $postsFrontPage = 5; //number of posts to allow on front page.
 
