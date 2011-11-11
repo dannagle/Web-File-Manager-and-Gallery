@@ -3,10 +3,10 @@
 [Ultrose][ultrose_website] is the ultimate one-file web manager. As a zero-install single file under 50 KB, you get:
 
 * 22 Custom themes to choose from (including "random")
- * Emailer (with custom "From" address)
- * RSS
- * File Browser
- * Full blogging system:
+* Emailer (with custom "From" address)
+* RSS
+* File Browser
+* Full blogging system:
    * Permalinks
    * Search
    * Primary Links
@@ -14,9 +14,9 @@
    * Pagination
    * Administration
    * File Manager (upload, delete, move)
- * Google Analytics
- * No database required. No other files beyond index.php required!
- * Facebook integration
+* Google Analytics
+* No database required. No other files beyond index.php required!
+* Facebook integration
 
 ##Installtion
 
