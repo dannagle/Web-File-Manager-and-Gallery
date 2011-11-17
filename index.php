@@ -313,6 +313,8 @@ if(isset($_POST['internalemail']) && $loggedIn)
     $success = "Message sent";
 }
 
+
+
 if($pagerequest == "rss")
 {
     outputRSS();
@@ -501,6 +503,23 @@ $(document).ready(function(){
         buttons: {
 			"Login": function() { 
 				$("#loginform").submit(); 
+			}, 
+			"Cancel": function() { 
+				$(this).dialog("close"); 
+			} 
+		}
+        });
+        return false;
+    });
+
+    $("#pinglink").click(function () { 
+    $("#pingblock").dialog({
+        height: 300,
+        width: 400,
+        modal:true,
+        buttons: {
+			"Login": function() { 
+				$("#pingform").submit(); 
 			}, 
 			"Cancel": function() { 
 				$(this).dialog("close"); 
@@ -846,6 +865,27 @@ margin-right: 0.3em;'></span>
 			</div>";
     }?>
 <br>
+
+<?php
+if($loggedIn)
+{
+    ?>
+    <div class="ui-widget-content ui-helper-hidden"></div>
+        
+    <div id = 'pingblock' title="Ping Address from Server" class="ui-helper-hidden">
+        <form id="pingform" action="<?php echo $baseurl;?>" method="post">
+        <br>
+         <p align="center">IP/domain: &nbsp;&nbsp;&nbsp;<input name="ping" id="ping" value=""  
+    type="text"
+                  onblur="this.style.backgroundColor='#ffffff'" onfocus="this.style.backgroundColor='#FFFCD0'"
+                  > 
+         </p>
+        </form>
+    </div>
+<?php
+}
+?>
+    
 <div class="ui-widget-content ui-helper-hidden"></div>
     
 <div id = 'loginblock' title="<?php echo $title;?> Login" class="ui-helper-hidden">
@@ -1127,6 +1167,24 @@ fg-button-icon-solo
                 
             }
             echo "</table>";
+
+          }elseif (isset($_POST['ping']) && $loggedIn)
+          {
+            echo '<h3>Ping Results for '.$_POST['ping'].'</h3>';
+            echo '<pre>';
+            
+            
+            if(stripos(php_uname (),'windows') !== false)
+            {
+                system("ping ".$_POST['ping']);
+                
+            } else {
+                
+                system("ping -c5 -w5 ".$_POST['ping']);
+            }
+
+            
+            echo '</pre>';
             
             
           }elseif ($loggedIn && ($pagerequest == "emailer"))
@@ -1327,6 +1385,7 @@ height:80px"></iframe>';
                         continue;
                     }                
                 }
+                
                 echo "<h2><a href='$baseurl?id=".urlencode($article['permalink'])."'>".$article['title'] . 
 "</a>
                 <span style=;float:right;'><small>".$article['date']."</small></span>
@@ -1386,6 +1445,7 @@ href='$baseurl?category=".urlencode($article['category'])."'>".$article['categor
                     echo "<li><a href='$baseurl?page=emailer'>Emailer</a></li>";
                     //echo "<li><a href='$baseurl?page=shell'>Command Shell</a></li>";
                     echo "<li><a href='$baseurl?page=phpinfo'>phpinfo()</a></li>";
+                    echo "<li><a id='pinglink' href='$baseurl?page=ping'>Ping</a></li>";
                     //echo "<li><a href='$baseurl?page=sql'>SQL</a></li>";
                     //echo "<li><a href='$baseurl?page=wordpress'>WordPress repair</a></li>";
                     //echo "<li><a href='$baseurl?page=drupal'>Drupal repair</a></li>";
@@ -1543,6 +1603,8 @@ function trimDotsSlashes($string)
     return $string;
     
 }
+
+
 
 
 function outputRSS()
