@@ -1,10 +1,13 @@
 <?php
+
 /*
 
 Installation:
 
 1. Save this file.
 2. Upload to your web server.
+
+Note that a SQLite database file called ".ultrose" is created.
 
 */
 
@@ -59,7 +62,8 @@ You may look here for the text: http://www.gnu.org/licenses/gpl-3.0.txt
 
 */
 
-global $title, $slogan, $desciption, $yourname, $email, $content, $baseurl, $postsFrontPage, $filetypes;
+global $title, $slogan, $desciption, $yourname,
+    $email, $content, $baseurl, $postsFrontPage, $filetypes, $databaseFile, $db;
 
 // Basic configuration 
 $title = "Your Site";
@@ -71,51 +75,22 @@ $email = "you@example.com"; //site contact email
 $password = "password";
 $copyright = $yourname; 
 
+$databaseFile = ".ultrose"; //The database file, created local to ultrose.
+
 //Choose your theme from the list (further) below.
 //$theme = "pepper-grinder";
 //uncomment to daily rotate the available themes.
 $theme = "random";
 
 //I recommend you put a real base url instead of using my calculation
-//Use a trailing slash if needed.
+//Use a trailing slash.
 //Example: "http://example.com/ultrose/"; 
 //Example: "http://ultrose.com/"; 
 $baseurl = getBaseUrl();
 
 
-/*
- Copy-paste-modify content template to add your own content.
- Your content starts and stops with the key ULTROSECONTENT
-Use <!--break--> or <!--more--> to break content for "Read more".
-*/
-
-$content[] = array(
-"title" => "About Site",
-"date" => "Oct 13, 2011",
-"category" => "ultrose",
-"permalink" => "about_me",
-"content" => <<<ULTROSECONTENT
-
-This is a post without a "Read More". 
-
-ULTROSECONTENT
-);
-
-
-$content[] = array(
-"title" => "Read More Example",
-"date" => "Oct 13, 2011",
-"category" => "ultrose",
-"permalink" => "readmore",
-"content" => <<<ULTROSECONTENT
-
-This is a post that has a read more.
-<!--break-->
-<br>
-Here is the read more.
-
-ULTROSECONTENT
-);
+connectToDB(); //This also creates the DB if needed.
+$content = fetchPosts();
 
 
 $enableSiteContact = 1; //set to 0 to disable.
@@ -133,6 +108,11 @@ $postsFrontPage = 5; //number of posts to allow on front page.
 $filetypes = "7z tar gz txt zip exe dmg pdf doc docx
             xls xlsx mp3 mpg ogg flv msi wav png gif
             jpg jpeg avi mov mp4";
+
+
+//If you wish to customize date listings, here is the PHP date string.
+$datetimestring = "M j, Y";
+
 
 /*
  
@@ -194,8 +174,6 @@ $themes[] = "swanky-purse";
 /*
   DO NOT CHANGE ANYTHING BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING!
 */
-
-
 
 $loggedIn = false;
 $error = false;
@@ -311,7 +289,76 @@ if(isset($_POST['internalemail']) && $loggedIn)
         htmlspecialchars($title)." Site Contact: ".htmlspecialchars($_POST['subject']),
         htmlspecialchars($_POST['message']));
     $success = "Message sent";
+
+} elseif (isset($_POST['deletepost']) && $loggedIn)
+{
+    $dbstatement = $db->prepare("delete from content where id = :id");
+
+    if($dbstatement == false)
+    {
+        $error = "Did delete post:".print_r_html($db->errorInfo(),true);
+    } else {
+        
+        $dbstatement->execute(array(':id'=>$_POST['deletepost']));
+        $success = "Post deleted.";
+        $content = fetchPosts();
+
+    }
+
+} elseif (isset($_POST['newpost']) && $loggedIn)
+{
+
+    $ptitle = trim($_POST['title']);
+    $ppermalink = trim(urlencode($_POST['permalink']));
+    $ppost = trim($_POST['post']);
+    $pcategories = trim($_POST['categories']);
+    $pdate = strtotime(trim($_POST['date']));
+    $pid = 0;
+    
+    if(isset($_POST['id']))
+    {
+        $pid = $_POST['id'];
+        $dbstatement = $db->prepare("UPDATE content set date=:date,
+                category=:category,title=:title, permalink=:permalink,content=:content where id=:id");
+        $dbstatement->execute(array(':id'=>$pid,
+                                    ':date'=>$pdate,
+                                    ':category'=>$pcategories,
+                                    ':title'=>$ptitle,
+                                    ':permalink'=>$ppermalink,
+                                    ':content'=>$ppost));
+
+    } else {
+        $dbstatement = $db->prepare("INSERT INTO content (date,category,title, permalink,content)
+            VALUES (:date,:category, :title, :permalink,:content)");
+
+        $dbstatement->execute(array(
+                                    ':date'=>$pdate,
+                                    ':category'=>$pcategories,
+                                    ':title'=>$ptitle,
+                                    ':permalink'=>$ppermalink,
+                                    ':content'=>$ppost));
+        
+    }
+
+    if($dbstatement == false)
+    {
+        $error = "Did not insert post:".print_r_html($db->errorInfo(),true);
+    } else {
+        
+
+        if(isset($_POST['id']))
+        {
+            $success = "<i>$ptitle</i> Updated.";
+        } else {
+            $success = "<i>$ptitle</i> Created.";
+        }
+
+        $content = fetchPosts();
+        $pagerequest = "post";
+    }
 }
+
+
 
 
 
@@ -437,6 +484,17 @@ $(document).ready(function(){
       $('#uploadform').submit();
     });
 
+    $('#DeletePost').click(function() {
+
+    	var answer = confirm("Delete post?");
+        if(answer)
+        {
+            $(".deletepostform").submit();
+        }
+      
+    });
+
+
 
     $(".movebutton").click(function () { 
 
@@ -500,6 +558,9 @@ $(document).ready(function(){
         height: 300,
         width: 400,
         modal:true,
+		hide: 'fade',
+        show: 'blind',
+        
         buttons: {
 			"Login": function() { 
 				$("#loginform").submit(); 
@@ -517,8 +578,10 @@ $(document).ready(function(){
         height: 300,
         width: 400,
         modal:true,
+		hide: 'fade',
+        show: 'blind',
         buttons: {
-			"Login": function() { 
+			"Ping": function() { 
 				$("#pingform").submit(); 
 			}, 
 			"Cancel": function() { 
@@ -528,6 +591,12 @@ $(document).ready(function(){
         });
         return false;
     });
+    	//hover states on the static widgets
+	$('.fg-button-icon-solo, .fg-button').hover(
+		function() { $(this).addClass('ui-state-hover'); }, 
+		function() { $(this).removeClass('ui-state-hover'); }
+	);
+
     
     
 });
@@ -967,6 +1036,7 @@ ui-state-default
                     echo "'>Next Theme</a></li>";
                     
                   }
+                  
                                   
                   //http://twitter-badges.s3.amazonaws.com/t_small-a.png
                   ?>
@@ -1214,11 +1284,65 @@ $email;?>"></td>
         </td>
     </tr>
 </table>
-</form>
-        
-            <?php
+</form><?php
+            
+ 
+          }elseif ($loggedIn && ($pagerequest == "post"))
+          {
+            
+            $editarticle['title'] = "";
+            $editarticle['permalink'] = "";
+            $editarticle['category'] = "";
+            $editarticle['content'] = "";
+            $editarticle['id'] = null;
+            $editarticle['date'] = time();
+            
+            if(isset($_REQUEST['id']))
+            {
+                foreach ($content as $article)
+                {
+                    if($article['id'] == $_REQUEST['id'])
+                    {
+                        $editarticle = $article;
+                        break;
+                    }
+                    
+                }
+            }
             
             
+            ?><form action="<?php echo $baseurl; ?>" method="post"> 
+
+<br>
+<table id="newpost">
+    <tr>
+        <td>Title: </td><td><input type="text" name="title" size="40" value="<?php echo $editarticle['title'];?>"></td>
+    </tr><tr>
+        <td>Permalink: </td><td><input type="text" name="permalink" size="40" value="<?php echo urldecode($editarticle['permalink']);?>"></td>
+   </tr><tr>
+        <td colspan="2">Post: <br>
+        <textarea name="post" cols="70" rows="30" ><?php echo $editarticle['content'];?></textarea>
+        </td>
+    </tr>
+    <tr>
+        <td>Categories: </td><td><input type="text" name="categories" size="40" value="<?php echo $editarticle['category'];?>"></td>
+    </tr>
+    <tr>
+        <td>Date: </td><td><input type="text" name="date" size="40" value="<?php echo date('M j, Y h:i:s A',$editarticle['date']);?>"></td>
+    </tr>
+   </tr><tr>
+        <?php
+            if (isset($editarticle['id']))
+            {
+                echo "<input type='hidden' name='id' value='".$editarticle['id']."'>";
+            }
+        ?>
+        <td colspan="2"><input type="submit" name="newpost" value="Post">
+        </td>
+    </tr>
+</table>
+</form><?php
+                       
 
           } elseif ($enableSiteContact && ($pagerequest == "contact"))
           {
@@ -1288,6 +1412,8 @@ $article['content']);
                   }
                   
               }
+              
+              $article['content'] = nl2br($article['content']);
   
   
               if(isset($_REQUEST['id']))
@@ -1388,12 +1514,27 @@ height:80px"></iframe>';
                 
                 echo "<h2><a href='$baseurl?id=".urlencode($article['permalink'])."'>".$article['title'] . 
 "</a>
-                <span style=;float:right;'><small>".$article['date']."</small></span>
+                <span style=;float:right;'><small>".date($datetimestring, $article['date'])."</small></span>
                 </h2>".$article['content']
                 . "<br>" . 
                 '<span class="ui-icon ui-icon-folder-open" style="margin: 0 2px 0 2px; float:left;"></span>'
                 ."<small>Filed under: <a 
 href='$baseurl?category=".urlencode($article['category'])."'>".$article['category']."</a></small><hr>";
+
+                if($loggedIn && isset($_REQUEST['id']))
+                {
+                    
+                    ?>
+                    <form class="deletepostform" name="deletepostform" action="<?php echo $baseurl;?>" method="post">
+                        <input type="hidden" name="deletepost" value="<?php echo $article['id']; ?>">
+                        <a id="DeletePost" href="#" class="fg-button ui-state-default fg-button-icon-solo  ui-corner-all" title="Delete">
+                        <span class="ui-icon ui-icon-trash"></span> Delete</a>
+                        <a id="EditPost" href="<?php echo "$baseurl?page=post&id=".$article['id']; ?>" class="fg-button ui-state-default fg-button-icon-solo  ui-corner-all" title="Edit">
+                        <span class="ui-icon ui-icon-pencil"></span> Edit</a>
+                    </form>
+                    
+                    <?php
+                }
                 
             }
 
@@ -1432,6 +1573,7 @@ href='$baseurl?category=".urlencode($article['category'])."'>".$article['categor
                   <?php
                   if($loggedIn)
                   {
+                    echo "<li><a href='$baseurl?page=post'><b>New Post</b></a></li>";
                     echo "<li><a href='$baseurl?page=logout'>Logout</a></li>";
 
                   } elseif ($enableLogin)
@@ -1662,7 +1804,64 @@ function outputRSS()
 <?php
 }
 
+function fetchPosts()
+{
+    global $db;
 
+	$result = $db->prepare("SELECT * FROM content order by date desc");
+	$result->execute(array());
+    $content = $result->fetchAll(PDO::FETCH_ASSOC);
+    
+    return $content;
+	
+}
+
+function connectToDB()
+{
+    global $databaseFile, $db;
+    
+    $path = pathinfo($_SERVER['SCRIPT_FILENAME']);
+    $dbpath = addslashes($path['dirname'])."/$databaseFile";
+    
+    $createnew = false;
+    if(!file_exists($dbpath))
+    {
+        $createnew = true;
+    }
+    
+    try {
+        /*** connect to SQLite database ***/
+        $db = new PDO("sqlite:$dbpath");
+        
+        //$dbstatement = $db->prepare("DROP TABLE IF EXISTS content");
+        //$dbstatement->execute();
+        
+        $db->exec('CREATE TABLE IF NOT EXISTS content
+            (id INTEGER PRIMARY KEY, date int, title text, category text, permalink text, content text)');
+
+        if($createnew)
+        {
+            $dbstatement = $db->prepare("INSERT INTO content (date,category,title, permalink,content) VALUES (:date,:category, :title, :permalink,:content)");
+            if($dbstatement == false)
+            {
+                echo  "DB table creation error:";
+                print_r_html($db->errorInfo());
+                exit;
+            }
+            $dbstatement->execute(array(':date'=>time() - 24*60*60*3, ':category'=>"ultrose",':title'=>"About Site",':permalink'=>"about_me", ':content'=>"This is a post without a \"Read More\""));
+            $dbstatement->execute(array(':date'=>time() - 24*60*60, ':category'=>"ultrose",':title'=>"Read More Example",':permalink'=>"readmore",
+                ':content'=> "This is a post that has a read more.<!--break--><br>Here is the read more."));
+        }
+
+    }
+    catch(PDOException $e)
+    {
+        echo $e->getMessage();
+        exit;
+
+    }
+    
+}
 
 ?>
 

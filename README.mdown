@@ -15,13 +15,12 @@
    * Administration
    * File Manager (upload, delete, move)
 * Google Analytics
-* No database required. No other files beyond index.php required!
-* Facebook integration
+* No other files needed beyond index.php. Creates a local SQLite database on first run.  
+* Some Facebook integration
 
 ##Installtion
 
-The only file you need `index.php`. Just drop it in a web server that supports PHP5+, and you are good to go! The jQuery libraries it uses are hosted by Google's public hosting services. 
-
+The only file you need `index.php`. Just drop it in a web server that supports PHP5+, and you are good to go! The jQuery libraries it uses are hosted by Google's public hosting services. The SQLite database is created on first run.
 
 ##Contact
 
@@ -29,7 +28,7 @@ Rather than using the contact page on Ultrose.com, please open issues using GitH
 
 ##Documentation
 
-You add content to the blogging portion Ultrose by adding to the `$content[]` variable directly in the PHP file. There are various features you can turn on and off that are listed at the top of the file. Everything you need is commented in the code. Eventually, I may write official documentation, but that is not planned for right now.  
+The first 150 lines of code is the best documenation. Content is now added using a form that writes to a local SQLite database file. The old method of punching content in the code is gone. 
 
 ##Credits
 
