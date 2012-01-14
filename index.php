@@ -1,17 +1,19 @@
 <?php
-
 /*
+Ultrose File Manager
 
 Installation:
 
 1. Save this file.
 2. Upload to your web server.
 
-Note that a SQLite database file called ".ultrose" is created.
-
 */
 
 $enableLogin = 1; //set to 0 to secure your site.
+$enableFileBrowser = 1; //set to 0 to disable public file browsing.
+$enableSiteContact = 1; //set to 0 to disable.
+$enableThemeRotate = 1; //set to 0 to disable.
+
 
 /*
 Ultrose is copyright and wholly owned by Dan Nagle (http://dannagle.com/).
@@ -63,11 +65,11 @@ You may look here for the text: http://www.gnu.org/licenses/gpl-3.0.txt
 */
 
 global $title, $slogan, $desciption, $yourname,
-    $email, $content, $baseurl, $postsFrontPage, $filetypes, $databaseFile, $db;
+    $email, $baseurl, $filetypes;
 
 // Basic configuration 
-$title = "Your Site";
-$slogan = "Your Slogan";
+$title = "Ultrose";
+$slogan = "File Manager";
 $desciption = "Your Description"; //required by RSS
 $yourname = "You";
 $email = "you@example.com"; //site contact email
@@ -75,12 +77,12 @@ $email = "you@example.com"; //site contact email
 $password = "password";
 $copyright = $yourname; 
 
-$databaseFile = ".ultrose"; //The database file, created local to ultrose.
 
 //Choose your theme from the list (further) below.
-//$theme = "pepper-grinder";
+$theme = "pepper-grinder";
+
 //uncomment to daily rotate the available themes.
-$theme = "random";
+//$theme = "random";
 
 //I recommend you put a real base url instead of using my calculation
 //Use a trailing slash.
@@ -88,19 +90,6 @@ $theme = "random";
 //Example: "http://ultrose.com/"; 
 $baseurl = getBaseUrl();
 
-
-connectToDB(); //This also creates the DB if needed.
-$content = fetchPosts();
-
-
-$enableSiteContact = 1; //set to 0 to disable.
-$enableFileBrowser = 1; //set to 0 to disable.
-$enableThemeRotate = 1; //set to 0 to disable.
-$enableFacebookLike = 1; //set to 0 to disable.
-$enableTwitter = 1; //set to 0 to disable. 
-$twitterAccount = ""; //put your twitter account here.
-
-$postsFrontPage = 5; //number of posts to allow on front page.
 
 //public file browser does not allow uploads
  
@@ -112,6 +101,8 @@ $filetypes = "7z tar gz txt zip exe dmg pdf doc docx
 
 //If you wish to customize date listings, here is the PHP date string.
 $datetimestring = "M j, Y";
+
+
 
 
 /*
@@ -128,26 +119,13 @@ Your content starts and stops with the key ULTROSECONTENT
 
 
 $navbarlinks[] = <<<ULTROSECONTENT
-<a href="http://dannagle.com/">Dan Nagle</a>
-ULTROSECONTENT;
-
-$navbarlinks[] = <<<ULTROSECONTENT
 <a href="http://ultrose.com/">Ultrose</a>
 ULTROSECONTENT;
 
 
 
-//place your analytics code here.
-
-$GoogleAnalyticsCode = <<<ULTROSECONTENT
-
-
-
-ULTROSECONTENT;
-
-
 //22 available Google-hosted themes. Comment them out to keep them out of rotation
-$themes[] = "ui-lightness";
+//$themes[] = "ui-lightness";
 $themes[] = "sunny";
 $themes[] = "ui-darkness";
 $themes[] = "redmond";
@@ -182,13 +160,14 @@ $success = false;
 if ($enableLogin == false)
 {
     setcookie("password", "", time()-100);  // force expire
+    $loggedIn = false;
 }
 
 
 if(stripos($theme, "random") !== false)
 {
         //crude method to "seed" the random.
-        //don't want all our blogs to show the same "random" theme each day, do we?
+        //don't want all our installs to show the same "random" theme each day, do we?
     $titlehashhex = md5($title);
         //chop it down a bit to ease memory/logic.
     $titlehashhex = substr($titlehashhex, 0, floor(strlen($titlehashhex) / 3));
@@ -228,22 +207,16 @@ if(isset($_REQUEST['theme']) && $enableThemeRotate)
      //choosetheme
 }
 
-
 $pagerequest = false;
 if(isset($_REQUEST['page']))
 {
     $pagerequest = $_REQUEST['page'];
     
+} else {
+    $pagerequest = "files";
 }
 
 
-
-if($pagerequest == "logout")
-{
-    setcookie("password", "", time()-100);  // force expire
-    $success = "You are now logged out."; 
-          
-}
 
 
 if(isset($_POST['password']) && $enableLogin)
@@ -272,111 +245,15 @@ if(isset($_POST['password']) && $enableLogin)
     
 }
 
-if(isset($_POST['internalemail']) && $loggedIn)
+if($pagerequest == "logout")
 {
-    mailer(htmlspecialchars($_POST['toemail']),
-        htmlspecialchars($_POST['name']),
-        htmlspecialchars($_POST['fromemail']),
-        htmlspecialchars($_POST['subject']),
-        htmlspecialchars($_POST['message']));
-    $success = "Message sent";
-    
-} elseif (isset($_POST['contact']) && $enableSiteContact)
-{
-    mailer(                      $email,
-        htmlspecialchars($_POST['name']),
-        htmlspecialchars($_POST['email']),
-        htmlspecialchars($title)." Site Contact: ".htmlspecialchars($_POST['subject']),
-        htmlspecialchars($_POST['message']));
-    $success = "Message sent";
-
-} elseif (isset($_POST['deletepost']) && $loggedIn)
-{
-    $dbstatement = $db->prepare("delete from content where id = :id");
-
-    if($dbstatement == false)
-    {
-        $error = "Did delete post:".print_r_html($db->errorInfo(),true);
-    } else {
-        
-        $dbstatement->execute(array(':id'=>$_POST['deletepost']));
-        $success = "Post deleted.";
-        $content = fetchPosts();
-
-    }
-
-} elseif (isset($_POST['newpost']) && $loggedIn)
-{
-
-    $ptitle = trim($_POST['title']);
-    $ppermalink = trim(urlencode($_POST['permalink']));
-    $ppost = trim($_POST['post']);
-    $pcategories = trim($_POST['categories']);
-    $pdate = strtotime(trim($_POST['date']));
-    $pid = 0;
-    
-    if(isset($_POST['id']))
-    {
-        $pid = $_POST['id'];
-        $dbstatement = $db->prepare("UPDATE content set date=:date,
-                category=:category,title=:title, permalink=:permalink,content=:content where id=:id");
-        $dbstatement->execute(array(':id'=>$pid,
-                                    ':date'=>$pdate,
-                                    ':category'=>$pcategories,
-                                    ':title'=>$ptitle,
-                                    ':permalink'=>$ppermalink,
-                                    ':content'=>$ppost));
-
-    } else {
-        $dbstatement = $db->prepare("INSERT INTO content (date,category,title, permalink,content)
-            VALUES (:date,:category, :title, :permalink,:content)");
-
-        $dbstatement->execute(array(
-                                    ':date'=>$pdate,
-                                    ':category'=>$pcategories,
-                                    ':title'=>$ptitle,
-                                    ':permalink'=>$ppermalink,
-                                    ':content'=>$ppost));
-        
-    }
-
-    if($dbstatement == false)
-    {
-        $error = "Did not insert post:".print_r_html($db->errorInfo(),true);
-    } else {
-        
-
-        if(isset($_POST['id']))
-        {
-            $success = "<i>$ptitle</i> Updated.";
-        } else {
-            $success = "<i>$ptitle</i> Created.";
-        }
-
-        $content = fetchPosts();
-        $pagerequest = "post";
-    }
+    setcookie("password", "", time()-1000);  // force expire
+    $loggedIn = false;
+    $success = "You are now logged out."; 
+    $pagerequest = "files";
+          
 }
 
-
-
-
-
-if($pagerequest == "rss")
-{
-    outputRSS();
-    exit;
-}
-
-
-if($pagerequest && $loggedIn)
-{
-    if($pagerequest == "phpinfo")
-    {
-        echo phpinfo();
-        exit;
-    }
-}
 
 if (!empty($_FILES) && $loggedIn)
 {
@@ -442,40 +319,14 @@ if(isset($_REQUEST['command']) && $loggedIn)
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><?php echo htmlspecialchars($title." | ".$slogan); ?></title>
-<link rel="alternate" type="application/rss+xml" title="<?php echo $title; ?> Primary Feed" href="<?php echo 
-$baseurl."?page=rss"; ?>" />
 <META NAME="DESCRIPTION" CONTENT="<?php echo $desciption; ?>">
-<META NAME="Generator" CONTENT="Ultrose 1.0">
+<META NAME="Generator" CONTENT="Ultrose 1.1">
     
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js" 
 type="text/javascript"></script>
 
 <script type="text/javascript">
-function padValue(val, padVal)
-{
-    var returnVal = val + padVal;
-    if(returnVal < 0)
-    {
-        returnVal = 0;
-    }
-    if (returnVal > 255)
-    {
-        returnVal = 255;
-    }
-    
-    return returnVal;
-}
-
-function massageRGB (rgbstring, padVal)
-{
-    var rgbvalue = rgbstring.split(',');
-    var temp = rgbvalue[0].split('(');
-    var rvalue = padValue(parseInt(temp[1], 10), padVal);
-    var gvalue = padValue(parseInt(rgbvalue[1], 10) , padVal);
-    var bvalue = padValue(parseInt(rgbvalue[2], 10) , padVal);
-    return "rgb(" + rvalue + ", "+ gvalue + ", "+ bvalue + ")";
-}
 
 
 $(document).ready(function(){
@@ -484,16 +335,11 @@ $(document).ready(function(){
       $('#uploadform').submit();
     });
 
-    $('#DeletePost').click(function() {
+	$(".successerrorclose").click(function(){
+		$(".errorblock").slideUp();
+		return false;
 
-    	var answer = confirm("Delete post?");
-        if(answer)
-        {
-            $(".deletepostform").submit();
-        }
-      
-    });
-
+	});
 
 
     $(".movebutton").click(function () { 
@@ -559,7 +405,6 @@ $(document).ready(function(){
         width: 400,
         modal:true,
 		hide: 'fade',
-        show: 'blind',
         
         buttons: {
 			"Login": function() { 
@@ -573,24 +418,6 @@ $(document).ready(function(){
         return false;
     });
 
-    $("#pinglink").click(function () { 
-    $("#pingblock").dialog({
-        height: 300,
-        width: 400,
-        modal:true,
-		hide: 'fade',
-        show: 'blind',
-        buttons: {
-			"Ping": function() { 
-				$("#pingform").submit(); 
-			}, 
-			"Cancel": function() { 
-				$(this).dialog("close"); 
-			} 
-		}
-        });
-        return false;
-    });
     	//hover states on the static widgets
 	$('.fg-button-icon-solo, .fg-button').hover(
 		function() { $(this).addClass('ui-state-hover'); }, 
@@ -617,7 +444,7 @@ body, html {
     background:#000059;
 }
 
-#errorblock {
+.errorblock {
     width:400px;
     margin:0 auto;
 
@@ -826,7 +653,7 @@ h1 {
 }
 #main {
     float:left;
-    width:680px;
+    width:910px;
     padding:10px;
     background-color: <?php echo $colortweakmainbg;?>;
 }
@@ -862,21 +689,6 @@ h2 {
     height:1px;
 }
 
-.search_form
-{
-    float:right;
-}
-
-.gradient {
- background: #FFFFFF; /* for non-css3 browsers */
- filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F0F0', endColorstr='#FFFFFF'); /* for IE 
-*/
- background: -webkit-gradient(linear, left top, left bottom, from(#F0F0F0), to(#FFFFFF)); /* for webkit 
-browsers */
- background: -moz-linear-gradient(top,  #43A2CA,  #f0f0f0); /* for firefox 3.6+ */ 
-}
-
-
 </style>
 <style type="text/css">	
 	.fg-button { outline: 0; margin:0 2px 0 0; padding: 0.2em 0.7em;
@@ -911,11 +723,14 @@ browsers */
 
     if($success !== false)
     {
-        echo "<div id='errorblock' class='ui-widget'>
+        echo "<div class='errorblock' class='ui-widget'>
 				<div class='ui-state-highlight ui-corner-bottom' style='padding: 0pt 0.7em;'> 
 					<p><span class='ui-icon ui-icon-info' style='float: left; 
 margin-right: 0.3em;'></span> 
-					$success</p>
+					$success
+                    <br><a href='#' class='ui-icon ui-icon-circle-close successerrorclose' style='float: right;'></a>
+
+                    </p>
 				</div>
 
 			</div>";
@@ -924,40 +739,27 @@ margin-right: 0.3em;'></span>
 
     if($error !== false)
     {
-        echo "<div id='errorblock' class='ui-widget'>
+        echo "<div class='errorblock' class='ui-widget'>
 				<div class='ui-state-error ui-corner-bottom' style='padding: 0pt 0.7em;'> 
 					<p><span class='ui-icon ui-icon-alert' style='float: left; 
 margin-right: 0.3em;'></span> 
-					$error</p>
+					$error
+                    <br><a href='#' class='ui-icon ui-icon-circle-close successerrorclose' style='float: right;'></a>
+                    </p>
 				</div>
 
 			</div>";
     }?>
 <br>
-
-<?php
-if($loggedIn)
-{
-    ?>
-    <div class="ui-widget-content ui-helper-hidden"></div>
-        
-    <div id = 'pingblock' title="Ping Address from Server" class="ui-helper-hidden">
-        <form id="pingform" action="<?php echo $baseurl;?>" method="post">
-        <br>
-         <p align="center">IP/domain: &nbsp;&nbsp;&nbsp;<input name="ping" id="ping" value=""  
-    type="text"
-                  onblur="this.style.backgroundColor='#ffffff'" onfocus="this.style.backgroundColor='#FFFCD0'"
-                  > 
-         </p>
-        </form>
-    </div>
-<?php
-}
-?>
     
 <div class="ui-widget-content ui-helper-hidden"></div>
     
 <div id = 'loginblock' title="<?php echo $title;?> Login" class="ui-helper-hidden">
+
+<?
+    if($enableLogin)
+    {
+?>        
     <form id="loginform" action="<?php echo $baseurl;?>" method="post">
     <br>
      <p align="center">Password: &nbsp;&nbsp;&nbsp;<input name="password" id="user_password" value=""  
@@ -966,6 +768,11 @@ type="password"
               > 
      </p>
     </form>
+<?        
+    } else {
+        ?><p align="center">Login disabled.</p><?        
+    }
+?>
 
 </div>
 <div id="doublewrap" class="ui-corner-all">
@@ -985,24 +792,23 @@ type="password"
          
          ?>
          
-		<a href="<?php echo $baseurl."?page=rss";?>" style="float:right;" class="fg-button 
+
+		<a
+           <?
+           if($loggedIn)
+           {
+                echo ' href="?page=logout" ' ;
+           } else {
+                echo ' id="loginlink" href="#"  ' ;
+           }
+           
+           ?>
+           style="float:right;" class="fg-button 
 ui-state-default
             fg-button-icon-solo  ui-corner-all" title="RSS">
-            <span class="ui-icon ui-icon-signal-diag"></span> RSS</a>
-            
-                    <?php
-         if($enableTwitter)
-         {
-            echo '		<a href="http://www.twitter.com/'.$twitterAccount.'"
-            style="float:right;;" class="fg-button ui-state-default fg-button-icon-solo  ui-corner-all"
-            title="Twitter"><img class="ui-icon " src="http://twitter-badges.s3.amazonaws.com/t_small-a.png"
-                alt="Follow on Twitter" /></a>';
+            <span class="ui-icon ui-icon-person"></span> Login</a>
 
-//                  <a style="float:right;border:none;" href="http://www.twitter.com/'.$twitterAccount.'">
-//                <img style="border:none;" src="http://twitter-badges.s3.amazonaws.com/t_small-a.png"
-//                alt="Follow on Twitter" /></a>';            
-         }
-?>
+         
          </div>
          <div id="nav" class = "nav">
                  <ul style="float:left;">
@@ -1018,10 +824,6 @@ ui-state-default
                     echo "<li><a href='$baseurl?page=contact'>Contact</a></li>";
                     
                   }
-                  if($enableFileBrowser)
-                  {
-                    echo "<li><a href='$baseurl?page=files'>Browse Files</a></li>";
-                  }
                   if($enableThemeRotate)
                   {
                     
@@ -1036,21 +838,9 @@ ui-state-default
                     echo "'>Next Theme</a></li>";
                     
                   }
-                  
-                                  
-                  //http://twitter-badges.s3.amazonaws.com/t_small-a.png
                   ?>
 
                  </ul>
- 
-         <form name="search_form" class="search_form" action="<?php echo $baseurl;?>" method="get">
-             <input id="s" class="text_input" type="text"
-                    onblur="this.style.backgroundColor='#ffffff'" 
-onfocus="this.style.backgroundColor='#FFFCD0'" name="s" />
-             <input type="submit" align="middle" id="search-submit" value="Search" />
-             <input id="searchsubmit" type="hidden" value="Search"/>
-         </form>                        	
- 
  
          </div>
          <div id="main" class="ui-corner-all">
@@ -1238,25 +1028,6 @@ fg-button-icon-solo
             }
             echo "</table>";
 
-          }elseif (isset($_POST['ping']) && $loggedIn)
-          {
-            echo '<h3>Ping Results for '.$_POST['ping'].'</h3>';
-            echo '<pre>';
-            
-            
-            if(stripos(php_uname (),'windows') !== false)
-            {
-                system("ping ".$_POST['ping']);
-                
-            } else {
-                
-                system("ping -c5 -w5 ".$_POST['ping']);
-            }
-
-            
-            echo '</pre>';
-            
-            
           }elseif ($loggedIn && ($pagerequest == "emailer"))
           {?><form action="<?php echo $baseurl; ?>" method="post"> 
 
@@ -1287,63 +1058,6 @@ $email;?>"></td>
 </form><?php
             
  
-          }elseif ($loggedIn && ($pagerequest == "post"))
-          {
-            
-            $editarticle['title'] = "";
-            $editarticle['permalink'] = "";
-            $editarticle['category'] = "";
-            $editarticle['content'] = "";
-            $editarticle['id'] = null;
-            $editarticle['date'] = time();
-            
-            if(isset($_REQUEST['id']))
-            {
-                foreach ($content as $article)
-                {
-                    if($article['id'] == $_REQUEST['id'])
-                    {
-                        $editarticle = $article;
-                        break;
-                    }
-                    
-                }
-            }
-            
-            
-            ?><form action="<?php echo $baseurl; ?>" method="post"> 
-
-<br>
-<table id="newpost">
-    <tr>
-        <td>Title: </td><td><input type="text" name="title" size="40" value="<?php echo $editarticle['title'];?>"></td>
-    </tr><tr>
-        <td>Permalink: </td><td><input type="text" name="permalink" size="40" value="<?php echo urldecode($editarticle['permalink']);?>"></td>
-   </tr><tr>
-        <td colspan="2">Post: <br>
-        <textarea name="post" cols="70" rows="30" ><?php echo $editarticle['content'];?></textarea>
-        </td>
-    </tr>
-    <tr>
-        <td>Categories: </td><td><input type="text" name="categories" size="40" value="<?php echo $editarticle['category'];?>"></td>
-    </tr>
-    <tr>
-        <td>Date: </td><td><input type="text" name="date" size="40" value="<?php echo date('M j, Y h:i:s A',$editarticle['date']);?>"></td>
-    </tr>
-   </tr><tr>
-        <?php
-            if (isset($editarticle['id']))
-            {
-                echo "<input type='hidden' name='id' value='".$editarticle['id']."'>";
-            }
-        ?>
-        <td colspan="2"><input type="submit" name="newpost" value="Post">
-        </td>
-    </tr>
-</table>
-</form><?php
-                       
-
           } elseif ($enableSiteContact && ($pagerequest == "contact"))
           {
             ?><form action="<?php echo $baseurl; ?>" method="post"> 
@@ -1373,231 +1087,10 @@ $email;?>"></td>
             
           } else {
             
-            
-            $contentCount = 0;
- 
-            $sentOlder = false;
-            foreach ($content as $article)
-            {
-              
-              $categories [] = $article['category']; 
-  
-  
-              if(isset($_REQUEST['s']))
-              {
-                  $trimmed = trim($_REQUEST['s']); 
-                  $searchresult = stripos($article['content'], $trimmed);
-  
-                  if($searchresult !== false)
-                  {
-                      //remove break and more
-                      $article['content'] = str_replace(array('<!--break-->', '<!--more-->'),'', 
-$article['content']); 
-  
-                      //highlight result
-                      $article['content'] = str_ireplace($trimmed,
-                          "<span class = 'ui-state-highlight'>".$trimmed."</span>", $article['content']);
-                      
-                      //truncate content to result
-                      $searchresult = $searchresult - 50;
-                      if($searchresult < 50)
-                      {
-                          $searchresult = 0;
-                      }
-                      
-                      $article['content'] = substr($article['content'] ,
-                          $searchresult, strlen($trimmed) + 150 ) . '<!--break-->';
-                  } else {
-                      continue;
-                  }
-                  
-              }
-              
-              $article['content'] = nl2br($article['content']);
-  
-  
-              if(isset($_REQUEST['id']))
-              {
-                  if($_REQUEST['id'] != $article['permalink'])
-                  {
-                      continue;
-                  }
-                  
-              }
-  
-              if(isset($_REQUEST['category']))
-              {
-                  if($_REQUEST['category'] != $article['category'])
-                  {
-                      continue;
-                  }
-              }
-              
-              if(!isset($_REQUEST['id']))
-              {
-                $readmore = strpos($article['content'], "<!--break-->");
-                if($readmore === false)
-                {
-                    $readmore = strpos($article['content'], "<!--more-->");
-                }
-                
-                if($readmore !== false)
-                {
-                    $article['content'] = substr($article['content'], 0, $readmore);
-                    $article['content'] = $article['content']  .
-                        "<br><br><span style='float:right;' class='ui-icon ui-icon-arrowthick-1-e'></span> " 
-                        ."<a style='float:right;' href='$baseurl?id=".urlencode($article['permalink'])."'>Read 
-more.</a>";
-                        
-                }
-
-                $contentCount++;
-                
-              } else {
-                
-                
-                $article['content'] = $article['content']  . "<br>";
-                
-                if($enableFacebookLike)
-                {
-                    $url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-                    $article['content'] = $article['content']  . "<br>". 
-                                //layout=button_count
-                        '<iframe src="http://www.facebook.com/plugins/like.php?href=' .
-                        $url.
-                        '"scrolling="no" frameborder="0" style="border:none; width:450px; 
-height:80px"></iframe>';
-                }
-        
-              }
-              
-            $nextrequest = 0;
-            if(isset($_REQUEST['next']))
-            {
-                $nextrequest = $_REQUEST['next'] + 1;
-                
-            }
-
-            if($contentCount >= (($nextrequest + 1) * $postsFrontPage))
-            {
-                if($sentOlder == false)
-                {
-                    $sentOlder = true;
-                    
-                    echo "<a href='$baseurl?next=".($nextrequest + 1);
-                    if(isset($_REQUEST['s']))
-                    {
-                        echo "&s=".$_REQUEST['s'];
-                    }
-                    if(isset($_REQUEST['category']))
-                    {
-                        echo "&category=".$_REQUEST['category'];
-                    }
-                    echo "'><button style='float:right;' class='ui-state-default ui-corner-all'
-                        type='submit'>More Entries</button></a>";
-                    
-                    
-                } else {
-                    continue;
-                    
-                }
-
-            } else {
-                
-                if(isset($_REQUEST['next']))
-                {
-                    if($contentCount < (($_REQUEST['next']) * $postsFrontPage))
-                    {
-                        continue;
-                    }                
-                }
-                
-                echo "<h2><a href='$baseurl?id=".urlencode($article['permalink'])."'>".$article['title'] . 
-"</a>
-                <span style=;float:right;'><small>".date($datetimestring, $article['date'])."</small></span>
-                </h2>".$article['content']
-                . "<br>" . 
-                '<span class="ui-icon ui-icon-folder-open" style="margin: 0 2px 0 2px; float:left;"></span>'
-                ."<small>Filed under: <a 
-href='$baseurl?category=".urlencode($article['category'])."'>".$article['category']."</a></small><hr>";
-
-                if($loggedIn && isset($_REQUEST['id']))
-                {
-                    
-                    ?>
-                    <form class="deletepostform" name="deletepostform" action="<?php echo $baseurl;?>" method="post">
-                        <input type="hidden" name="deletepost" value="<?php echo $article['id']; ?>">
-                        <a id="DeletePost" href="#" class="fg-button ui-state-default fg-button-icon-solo  ui-corner-all" title="Delete">
-                        <span class="ui-icon ui-icon-trash"></span> Delete</a>
-                        <a id="EditPost" href="<?php echo "$baseurl?page=post&id=".$article['id']; ?>" class="fg-button ui-state-default fg-button-icon-solo  ui-corner-all" title="Edit">
-                        <span class="ui-icon ui-icon-pencil"></span> Edit</a>
-                    </form>
-                    
-                    <?php
-                }
-                
-            }
-
-              
-              
-             
-            }
+                echo "<h2>Public Browsing Disabled.</h2> Log in to see files.<hr>";
           }
           ?>
           </div>
-         <div id="sidebar">
-                 <h2 align="center">Categories</h2>
-                 <ul style="position:relative;top:-10px;">
-                    <?php
-                    $categories = array_count_values($categories);
-                    
-                        foreach($categories as $name => $count)
-                        {
-                            echo "<li><a href='$baseurl?category=".urlencode($name)."'>$name</a> 
-($count)</li>";
-                        }
-                    
-                    ?>
-                 </ul>
-                 
-                    
-                    <?php if($enableLogin)
-                    {
-                      echo '<h2 align="center">Tools</h2>';  
-                    }
-                    ?>
-                    
-                 
-                 
-                 <ul style="position:relative;top:-10px;">
-                  <?php
-                  if($loggedIn)
-                  {
-                    echo "<li><a href='$baseurl?page=post'><b>New Post</b></a></li>";
-                    echo "<li><a href='$baseurl?page=logout'>Logout</a></li>";
-
-                  } elseif ($enableLogin)
-                  {
-                    echo "<li><a id='loginlink' href='$baseurl?page=login'>Login</a></li>";
-                    
-                  }
-                  if($loggedIn)
-                  {
-                    echo "<li><a href='$baseurl?page=files'>File Manager</a></li>";
-                    echo "<li><a href='$baseurl?page=emailer'>Emailer</a></li>";
-                    //echo "<li><a href='$baseurl?page=shell'>Command Shell</a></li>";
-                    echo "<li><a href='$baseurl?page=phpinfo'>phpinfo()</a></li>";
-                    echo "<li><a id='pinglink' href='$baseurl?page=ping'>Ping</a></li>";
-                    //echo "<li><a href='$baseurl?page=sql'>SQL</a></li>";
-                    //echo "<li><a href='$baseurl?page=wordpress'>WordPress repair</a></li>";
-                    //echo "<li><a href='$baseurl?page=drupal'>Drupal repair</a></li>";
-                    //echo "<li><a href='$baseurl?page=drupal'>Joomla! repair</a></li>";
-                    
-                  }
-                  ?>
-
-                  </ul>
-         </div>
          <br>
          <div id="footer"class="ui-widget ui-corner-bottom"><br>
             Copyright &copy; <?php echo date('Y'). " $copyright"; ?>, powered by <a 
@@ -1608,11 +1101,6 @@ href="http://ultrose.com/">Ultrose</a>
 <br>
 </div>
 <br>
-<?php
-
-echo $GoogleAnalyticsCode;
-
-?>
 </body>
 </html>
 <?php
@@ -1653,10 +1141,6 @@ function getBaseUrl()
     return $url;
 }
 
-function searchContent ($contentArray)
-{
- 
-}
 
 
 function print_r_html($data,$return_data=false)
@@ -1692,7 +1176,7 @@ function mailer($to, $fromname, $fromemail, $subject, $themessage)
 
 function directoryContents($directory)
 {
-    global $title, $slogan, $desciption, $yourname, $email, $content, $baseurl, $postsFrontPage, $filetypes;
+    global $title, $slogan, $desciption, $yourname, $email, $baseurl, $filetypes;
 
     // open this directory
     $myDirectory = opendir($directory);
@@ -1748,120 +1232,6 @@ function trimDotsSlashes($string)
 
 
 
-
-function outputRSS()
-{
-   
-    global $title, $slogan, $desciption, $yourname, $email, $content, $baseurl, $postsFrontPage;
-    
-    $allowedtags = '<p><ul><li><b><strong><ol><img><a><br><pre><img>';
-//    $allowedtags = '<br>';
-
-      header ("content-type: text/xml");
-    echo '<?xml version="1.0" encoding="windows-1252"?>';
-?><rss version="2.0">
-  <channel>
-    <title><?php echo "$title | $slogan";?></title>
-    <description><?php echo $desciption;?></description>
-    <link><?php echo $baseurl;?></link>
-    <copyright>Copyright <?php echo $yourname;?></copyright>
-    <language>en-us</language>
-    <lastBuildDate><?php echo date('D, d M Y H:i:s T', strtotime ( "today")); ?></lastBuildDate>
-    <pubDate><?php echo date('D, d M Y H:i:s T', strtotime ( "today")); ?></pubDate>
-    <generator>http://ultrose.com/</generator>
-<?php
-    
-    $pageCounter = 0 ;
-    
-    foreach($content as $item)
-    {
-        if($pageCounter >= $postsFrontPage)
-        {
-            break;
-        }
-        $pageCounter++;
-        
-        
-        ?>
-
-    <item>
-      <title><?php echo $item['title'];?></title>
-      <description><?php echo htmlentities(strip_tags($item['content'], $allowedtags));?></description>
-
-      <link><?php echo "$baseurl?id=".urlencode($item['permalink']);?></link>
-      <pubDate><?php echo date('D, d M Y H:i:s T', strtotime ( $item['date'])); ?></pubDate>
-      <guid isPermaLink="true"><?php echo "$baseurl?id=".urlencode($item['permalink']);?></guid>
-    </item>
-            
-        
-        <?php
-    }
-    ?>
-    
-  </channel>
-</rss>    
-
-<?php
-}
-
-function fetchPosts()
-{
-    global $db;
-
-	$result = $db->prepare("SELECT * FROM content order by date desc");
-	$result->execute(array());
-    $content = $result->fetchAll(PDO::FETCH_ASSOC);
-    
-    return $content;
-	
-}
-
-function connectToDB()
-{
-    global $databaseFile, $db;
-    
-    $path = pathinfo($_SERVER['SCRIPT_FILENAME']);
-    $dbpath = addslashes($path['dirname'])."/$databaseFile";
-    
-    $createnew = false;
-    if(!file_exists($dbpath))
-    {
-        $createnew = true;
-    }
-    
-    try {
-        /*** connect to SQLite database ***/
-        $db = new PDO("sqlite:$dbpath");
-        
-        //$dbstatement = $db->prepare("DROP TABLE IF EXISTS content");
-        //$dbstatement->execute();
-        
-        $db->exec('CREATE TABLE IF NOT EXISTS content
-            (id INTEGER PRIMARY KEY, date int, title text, category text, permalink text, content text)');
-
-        if($createnew)
-        {
-            $dbstatement = $db->prepare("INSERT INTO content (date,category,title, permalink,content) VALUES (:date,:category, :title, :permalink,:content)");
-            if($dbstatement == false)
-            {
-                echo  "DB table creation error:";
-                print_r_html($db->errorInfo());
-                exit;
-            }
-            $dbstatement->execute(array(':date'=>time() - 24*60*60*3, ':category'=>"ultrose",':title'=>"About Site",':permalink'=>"about_me", ':content'=>"This is a post without a \"Read More\""));
-            $dbstatement->execute(array(':date'=>time() - 24*60*60, ':category'=>"ultrose",':title'=>"Read More Example",':permalink'=>"readmore",
-                ':content'=> "This is a post that has a read more.<!--break--><br>Here is the read more."));
-        }
-
-    }
-    catch(PDOException $e)
-    {
-        echo $e->getMessage();
-        exit;
-
-    }
-    
-}
 
 ?>
 

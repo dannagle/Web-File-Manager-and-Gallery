@@ -1,26 +1,19 @@
 #Ultrose
  
-[Ultrose][ultrose_website] is the ultimate one-file web manager. As a zero-install single file under 50 KB, you get:
+[Ultrose][ultrose_website] is a one-file file manager / browser.
+
+As a zero-install single file under 50 KB, you get:
 
 * 22 Custom themes to choose from (including "random")
 * Emailer (with custom "From" address)
-* RSS
-* File Browser
-* Full blogging system:
-   * Permalinks
-   * Search
-   * Primary Links
-   * Categories
-   * Pagination
-   * Administration
-   * File Manager (upload, delete, move)
-* Google Analytics
-* No other files needed beyond index.php. Creates a local SQLite database on first run.  
-* Some Facebook integration
+* Area for nav links
+* Public File Browser
+* Private File Manager (upload, delete, move)
+* No other files needed beyond index.php. 
 
 ##Installtion
 
-The only file you need `index.php`. Just drop it in a web server that supports PHP5+, and you are good to go! The jQuery libraries it uses are hosted by Google's public hosting services. The SQLite database is created on first run.
+The only file you need `index.php`. Just drop it in a web server that supports PHP5+, and you are good to go! The jQuery libraries it uses are hosted by Google's public hosting services. 
 
 ##Contact
 
@@ -28,7 +21,8 @@ Rather than using the contact page on Ultrose.com, please open issues using GitH
 
 ##Documentation
 
-The first 150 lines of code is the best documenation. Content is now added using a form that writes to a local SQLite database file. The old method of punching content in the code is gone. 
+The first 150 lines of code is the best documenation. You can enable/disable login and file browsing
+
 
 ##Credits
 
