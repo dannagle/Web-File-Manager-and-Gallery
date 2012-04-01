@@ -4,7 +4,7 @@
 
 As a zero-install single file under 50 KB, you get:
 
-* 22 Custom themes to choose from (including "random")
+* 24 Custom themes to choose from (including "random")
 * Emailer (with custom "From" address)
 * Area for nav links
 * Public File Browser
@@ -26,7 +26,7 @@ The first 150 lines of code is the best documenation. You can enable/disable log
 
 ##Credits
 
-Copyright (c) 2011 [Dan Nagle][personal_site] 
+Copyright (c) 2012 [Dan Nagle][personal_site] 
 
 [ultrose_website]: http://ultrose.com
 [personal_site]: http://dannagle.com

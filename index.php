@@ -22,7 +22,7 @@ It is Dual-Licensed under GPLv3 or MIT.
 
 ===========================MIT LICENSE================================================
 
-Copyright (c) 2011 Dan Nagle (http://dannagle.com)
+Copyright (c) 2012 Dan Nagle (http://dannagle.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files (the "Software"), to deal in the Software
@@ -124,18 +124,21 @@ ULTROSECONTENT;
 
 
 
-//22 available Google-hosted themes. Comment them out to keep them out of rotation
-//$themes[] = "ui-lightness";
-$themes[] = "sunny";
+//24 available Google-hosted themes.
+//Comment them out to keep them out of rotation
+$themes[] = "ui-lightness";
 $themes[] = "ui-darkness";
+$themes[] = "smoothness";
+$themes[] = "start";
 $themes[] = "redmond";
+$themes[] = "sunny";
 $themes[] = "overcast";
 $themes[] = "le-frog";
 $themes[] = "flick";
 $themes[] = "pepper-grinder";
 $themes[] = "eggplant";
-$themes[] = "cupertino";
 $themes[] = "dark-hive";
+$themes[] = "cupertino";
 $themes[] = "south-street";
 $themes[] = "blitzer";
 $themes[] = "humanity";
@@ -312,18 +315,15 @@ if(isset($_REQUEST['command']) && $loggedIn)
 }
 
 
-?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+?><!DOCTYPE html >
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><?php echo htmlspecialchars($title." | ".$slogan); ?></title>
 <META NAME="DESCRIPTION" CONTENT="<?php echo $desciption; ?>">
-<META NAME="Generator" CONTENT="Ultrose 1.1">
+<META NAME="Generator" CONTENT="Ultrose 1.2">
     
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js" 
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" 
 type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -430,7 +430,7 @@ $(document).ready(function(){
 
 </script>
 
-<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/themes/<?php echo 
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/<?php echo 
 $theme;?>/jquery-ui.css" type="text/css" />
 
 
@@ -460,11 +460,15 @@ body, html {
 {
     width:950px;
     margin:0 auto;
+    /*
+    color:#cfe1e4;
+    */
 }
-
 <?php
 
 //My own personal tweaking... 
+
+
 
 $colortweakwrapbg = "#FFFFFF;";
 $colortweakwrapcolor = "#FFFFFF;";
@@ -483,6 +487,18 @@ $colortweakbodybg =  "#000000;";
             $colortweakwrapcolor = "#383838;";
             $colortweakmainbg =  "#FFFFD1;";
             $colortweakbodybg =  "#1D1401;";
+            break;
+        case "smoothness":
+            $colortweakwrapbg = "#E2E2E2;";
+            $colortweakwrapcolor = "#333333;";
+            $colortweakmainbg =  "#FFFFFF;";
+            $colortweakbodybg =  "#242224;";
+            break;
+        case "start":
+            $colortweakwrapbg = "#E3EAEE;";
+            $colortweakwrapcolor = "#333333;";
+            $colortweakmainbg =  "#FFFFFF;";
+            $colortweakbodybg =  "#C7D3DC;";
             break;
         case "ui-darkness":
             $colortweakwrapbg = "#252525;";
@@ -605,6 +621,8 @@ $colortweakbodybg =  "#000000;";
             $colortweakbodybg =  "#584527;";
             break;
         default:
+            //echo 'NEED TWEAK';
+            //exit;
             $colortweakwrapbg = "#FFFFFF;";
             $colortweakwrapcolor = "#FFFFFF;";
             $colortweakmainbg =  "#FFFFFF;";
