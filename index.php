@@ -70,12 +70,35 @@ global $title, $slogan, $desciption, $yourname,
 // Basic configuration 
 $title = "Ultrose";
 $slogan = "File Manager";
-$desciption = "Your Description"; //required by RSS
+$desciption = "Your Description"; //What shows up on Google
 $yourname = "You";
 $email = "you@example.com"; //site contact email
 
 $password = "password";
 $copyright = $yourname; 
+
+/*
+If you wish to have a little splash blurb on first arrival, put it here. Otherwise, leave blank.
+  
+Your content starts and stops with the key ULTROSECONTENT
+*/
+$landingBanner = <<<ULTROSECONTENT
+ULTROSECONTENT;
+
+//Example...
+/*
+$landingBanner = <<<ULTROSECONTENT
+<center>
+This is Ultrose, the completely free web file manager.
+<br><br>It is available for download.
+<br><br>
+<span class="ui-state-highlight ui-corner-all" style="padding: 0pt 0.7em;"> 
+<a href="https://github.com/dannagle/Ultrose"><big><b>Download Ultrose from GitHub!</b></big></a>
+</span>
+</center>
+ULTROSECONTENT;
+*/
+
 
 
 //Choose your theme from the list (further) below.
@@ -122,9 +145,11 @@ $navbarlinks[] = <<<ULTROSECONTENT
 <a href="http://ultrose.com/">Ultrose</a>
 ULTROSECONTENT;
 
+$navbarlinks[] = <<<ULTROSECONTENT
+<a href="http://dannagle.com/">DanNagle.com</a>
+ULTROSECONTENT;
 
-
-//24 available Google-hosted themes.
+//25 available Google-hosted themes.
 //Comment them out to keep them out of rotation
 $themes[] = "ui-lightness";
 $themes[] = "ui-darkness";
@@ -150,10 +175,14 @@ $themes[] = "mint-choc";
 $themes[] = "black-tie";
 $themes[] = "trontastic";
 $themes[] = "swanky-purse";
+$themes[] = "base";
 
 
 /*
   DO NOT CHANGE ANYTHING BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING!
+
+------------------------------------------------------------------------------
+
 */
 
 $loggedIn = false;
@@ -217,6 +246,20 @@ if(isset($_REQUEST['page']))
     
 } else {
     $pagerequest = "files";
+}
+
+
+
+
+if(!$loggedIn && trim($landingBanner) != "")
+{
+    session_start();
+    if(!isset($_SESSION['bannershown']))
+    {
+        $success = $landingBanner;
+        $_SESSION['bannershown'] = true;
+    }
+    
 }
 
 
@@ -320,10 +363,10 @@ if(isset($_REQUEST['command']) && $loggedIn)
 <head>
 <title><?php echo htmlspecialchars($title." | ".$slogan); ?></title>
 <META NAME="DESCRIPTION" CONTENT="<?php echo $desciption; ?>">
-<META NAME="Generator" CONTENT="Ultrose 1.2">
+<META NAME="Generator" CONTENT="Ultrose 1.2.1">
     
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" 
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js" 
 type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -430,7 +473,7 @@ $(document).ready(function(){
 
 </script>
 
-<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/<?php echo 
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/<?php echo 
 $theme;?>/jquery-ui.css" type="text/css" />
 
 
@@ -461,7 +504,7 @@ body, html {
     width:950px;
     margin:0 auto;
     /*
-    color:#cfe1e4;
+    color:#f0f0f0;
     */
 }
 <?php
@@ -499,6 +542,12 @@ $colortweakbodybg =  "#000000;";
             $colortweakwrapcolor = "#333333;";
             $colortweakmainbg =  "#FFFFFF;";
             $colortweakbodybg =  "#C7D3DC;";
+            break;
+        case "base":
+            $colortweakwrapbg = "#f0f0f0;";
+            $colortweakwrapcolor = "#333333;";
+            $colortweakmainbg =  "#FFFFFF;";
+            $colortweakbodybg =  "#606060;";
             break;
         case "ui-darkness":
             $colortweakwrapbg = "#252525;";
