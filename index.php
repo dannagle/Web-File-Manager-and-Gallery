@@ -178,6 +178,14 @@ $themes[] = "swanky-purse";
 $themes[] = "base";
 
 
+
+//This will be outputted just before </body> 
+//Intended for Google Analytics, but it could used be any footer tracking code.
+$GoogleAnalyticsCode = <<<ULTROSECONTENT
+ULTROSECONTENT;
+
+
+
 /*
   DO NOT CHANGE ANYTHING BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING!
 
@@ -1168,6 +1176,9 @@ href="http://ultrose.com/">Ultrose</a>
 <br>
 </div>
 <br>
+    <?php
+echo $GoogleAnalyticsCode;
+    ?>
 </body>
 </html>
 <?php
