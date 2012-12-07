@@ -371,10 +371,10 @@ if(isset($_REQUEST['command']) && $loggedIn)
 <head>
 <title><?php echo htmlspecialchars($title." | ".$slogan); ?></title>
 <META NAME="DESCRIPTION" CONTENT="<?php echo $desciption; ?>">
-<META NAME="Generator" CONTENT="Ultrose 1.2.1">
+<META NAME="Generator" CONTENT="Ultrose 1.2.2">
     
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js" type="text/javascript"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js" 
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" 
 type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -481,7 +481,7 @@ $(document).ready(function(){
 
 </script>
 
-<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/<?php echo 
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/<?php echo 
 $theme;?>/jquery-ui.css" type="text/css" />
 
 

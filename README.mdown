@@ -26,7 +26,7 @@ The first 150 lines of code is the best documenation. You can enable/disable log
 
 ##Credits
 
-Copyright (c) 2012 [Dan Nagle][personal_site] 
+Copyright (c) 2013 [Dan Nagle][personal_site] 
 
 [ultrose_website]: http://ultrose.com
 [personal_site]: http://dannagle.com
