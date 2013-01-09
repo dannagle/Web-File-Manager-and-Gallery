@@ -371,7 +371,7 @@ if(isset($_REQUEST['command']) && $loggedIn)
 <head>
 <title><?php echo htmlspecialchars($title." | ".$slogan); ?></title>
 <META NAME="DESCRIPTION" CONTENT="<?php echo $desciption; ?>">
-<META NAME="Generator" CONTENT="Ultrose 1.2.2">
+<META NAME="Generator" CONTENT="Ultrose 1.2.3">
     
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" 
@@ -831,7 +831,7 @@ margin-right: 0.3em;'></span>
     
 <div id = 'loginblock' title="<?php echo $title;?> Login" class="ui-helper-hidden">
 
-<?
+<?php
     if($enableLogin)
     {
 ?>        
@@ -843,9 +843,9 @@ type="password"
               > 
      </p>
     </form>
-<?        
+<?php        
     } else {
-        ?><p align="center">Login disabled.</p><?        
+        ?><p align="center">Login disabled.</p><?php        
     }
 ?>
 
@@ -869,7 +869,7 @@ type="password"
          
 
 		<a
-           <?
+           <?php
            if($loggedIn)
            {
                 echo ' href="?page=logout" ' ;
