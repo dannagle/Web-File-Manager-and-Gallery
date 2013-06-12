@@ -24,7 +24,7 @@ Rather than using the contact page on Ultrose.com, please open issues using GitH
 The first 150 lines of code is the best documenation. You can enable/disable login and file browsing
 
 ##Demo
-[Ultrose][ultrose_website]
+[Ultrose Website][ultrose_website]
 
 ##Credits
 
