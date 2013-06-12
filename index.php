@@ -17,7 +17,7 @@ $enableThemeRotate = 1; //set to 0 to disable.
 
 /*
 Ultrose is copyright and wholly owned by Dan Nagle (http://dannagle.com/).
-It is Dual-Licensed under GPLv3 or MIT.
+It is MIT Licensed.
 
 
 ===========================MIT LICENSE================================================
@@ -42,25 +42,9 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-===========================GPLv3================================================
+===========================================================================
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-    
-
-For brevity, the GPL text is not included.
-You may look here for the text: http://www.gnu.org/licenses/gpl-3.0.txt
-
+GPLv3 licensed was removed. Ultrose is now MIT-only.
 
 */
 
@@ -149,7 +133,7 @@ $navbarlinks[] = <<<ULTROSECONTENT
 <a href="http://dannagle.com/">DanNagle.com</a>
 ULTROSECONTENT;
 
-//25 available Google-hosted themes.
+//24 available Google-hosted themes.
 //Comment them out to keep them out of rotation
 $themes[] = "ui-lightness";
 $themes[] = "ui-darkness";
@@ -175,7 +159,7 @@ $themes[] = "mint-choc";
 $themes[] = "black-tie";
 $themes[] = "trontastic";
 $themes[] = "swanky-purse";
-$themes[] = "base";
+//$themes[] = "base";  //theme now gone
 
 
 
@@ -311,14 +295,14 @@ if($pagerequest == "logout")
 
 if (!empty($_FILES) && $loggedIn)
 {
-            
+    
     if($loggedIn && isset($_REQUEST['directory']))
     {
         $directory = "./".trimDotsSlashes($_REQUEST['directory']);
         if (!move_uploaded_file($_FILES["uploadfile"]["tmp_name"], 
 $directory."/".$_FILES["uploadfile"]["name"]))
         {
-            $error="Error uploading file.";
+            $error="Error uploading file, message=" . print_r(error_get_last());;
             
         } else {
             $success = "Sucessfully uploaded ".trimDotsSlashes($directory."/".$_FILES["uploadfile"]["name"]); 
@@ -331,35 +315,39 @@ $directory."/".$_FILES["uploadfile"]["name"]))
 
 
 
-if(isset($_REQUEST['command']) && $loggedIn)
+if(isset($_POST['command']) && $loggedIn)
 {
     //prevent going back directories.
-    $from = "./".trimDotsSlashes($_REQUEST['from']);
-    $to = "./".trimDotsSlashes($_REQUEST['to']);
-    if($_REQUEST['command'] == "move")
+    $from = ($_POST['from']);
+    $to = ($_POST['to']);
+    
+    //still need to add directory creation.
+    
+    
+    if($_POST['command'] == "move")
     {
         
-        if(rename($from, $to) === false)
+        if(@rename($from, $to) === false)
         {
-            echo "Error";
+            echo "Error, message=".print_r(error_get_last());
         }
         exit;
     }
     
-    if($_REQUEST['command'] == "delete")
+    if($_POST['command'] == "delete")
     {
-        if(unlink($from) === false)
+        if(@unlink($from) === false)
         {
-            echo "Error";
+            echo "Error, message=".print_r(error_get_last());
         }
         exit;
     }
     
-    if($_REQUEST['command'] == "copy")
+    if($_POST['command'] == "copy")
     {
-        if (copy($from, $to) === false)
+        if (@copy($from, $to) === false)
         {
-            echo "Error";
+            echo "Error, message=".print_r(error_get_last());
         }
         exit;
     }
@@ -371,10 +359,10 @@ if(isset($_REQUEST['command']) && $loggedIn)
 <head>
 <title><?php echo htmlspecialchars($title." | ".$slogan); ?></title>
 <META NAME="DESCRIPTION" CONTENT="<?php echo $desciption; ?>">
-<META NAME="Generator" CONTENT="Ultrose 1.2.3">
+<META NAME="Generator" CONTENT="Ultrose 1.3">
     
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" 
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" 
 type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -396,7 +384,7 @@ $(document).ready(function(){
     $(".movebutton").click(function () { 
 
         var move = prompt("Move/Rename to where?",$(this).attr("title"));
-        if (move!=null && move!="")
+        if (move)
         {
           $.post("<?php echo $baseurl;?>", { command: "move", from: $(this).attr("title"), to: move},
             function(data) {
@@ -413,27 +401,27 @@ $(document).ready(function(){
 
     });
     $(".deletebutton").click(function () { 
-
-	  var answer = confirm('Delete ' + $(this).attr("title") + '?'); 
-	  if(answer)
-	  {
-          $.post("<?php echo $baseurl;?>", { command: "delete", from: $(this).attr("title")},
-            function(data) {
-                if(data.length > 2)
-                {
-                    alert(data);
-                } else {
-                    location.reload(true);
-                    
-                }
-          });
-	  
-	  }
+    
+        var yes = confirm('Delete ' + $(this).attr("title") + '?'); 
+        if(yes)
+        {
+            $.post("<?php echo $baseurl;?>", { command: "delete", from: $(this).attr("title")},
+              function(data) {
+                  if(data.length > 2)
+                  {
+                      alert(data);
+                  } else {
+                      location.reload(true);
+                      
+                  }
+            });
+        
+        }
     });
     $(".copybutton").click(function () { 
 
         var move = prompt("Copy to where?",$(this).attr("title"));
-        if (move!=null && move!="")
+        if (move)
         {
           $.post("<?php echo $baseurl;?>", { command: "copy", from: $(this).attr("title"), to: move},
             function(data) {
@@ -469,7 +457,7 @@ $(document).ready(function(){
         return false;
     });
 
-    	//hover states on the static widgets
+    //hover states on the static widgets
 	$('.fg-button-icon-solo, .fg-button').hover(
 		function() { $(this).addClass('ui-state-hover'); }, 
 		function() { $(this).removeClass('ui-state-hover'); }
@@ -481,7 +469,7 @@ $(document).ready(function(){
 
 </script>
 
-<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/<?php echo 
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/<?php echo 
 $theme;?>/jquery-ui.css" type="text/css" />
 
 
@@ -1186,6 +1174,7 @@ echo $GoogleAnalyticsCode;
 function getBaseUrl()
 {
 
+
     if(isset($_SERVER['HTTPS']))
     {
         $url = "http://";
@@ -1201,21 +1190,17 @@ function getBaseUrl()
     
     $url = $url.$_SERVER['HTTP_HOST'];
 
-
-    if(!isset($_SERVER['HTTPS']) && $_SERVER['SERVER_PORT'] !=  80)
-    {
-        $url = $url . ":" . $_SERVER['SERVER_PORT'];
-        
-    } 
-
-    if(isset($_SERVER['HTTPS']) && $_SERVER['SERVER_PORT'] !=  443)
-    {
-        $url = $url . ":" . $_SERVER['SERVER_PORT'];
-    }
-
     
     $url = $url .  $_SERVER['REQUEST_URI'];
-    $url = str_replace("?". $_SERVER['QUERY_STRING'], "", $url);    
+    $url = str_replace("?". $_SERVER['QUERY_STRING'], "", $url);
+    
+    /*
+    
+    echo $url;
+    echo "<br><br>";
+    print_r_html($_SERVER);exit;
+    */
+    
     return $url;
 }
 

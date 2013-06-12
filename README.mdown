@@ -4,7 +4,7 @@
 
 As a zero-install single file under 50 KB, you get:
 
-* 25 Custom themes to choose from (including "random")
+* 24 Custom themes to choose from (including "random")
 * Emailer 
 * Area for nav links
 * Public File Browser
@@ -23,6 +23,8 @@ Rather than using the contact page on Ultrose.com, please open issues using GitH
 
 The first 150 lines of code is the best documenation. You can enable/disable login and file browsing
 
+##Demo
+[Ultrose][ultrose_website]
 
 ##Credits
 
