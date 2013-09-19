@@ -1,6 +1,6 @@
 <?php
 /*
-Ultrose File Manager
+Ultrose Gallery & File Manager 
 
 Installation:
 
@@ -14,7 +14,6 @@ $enableFileBrowser = 1; //set to 0 to disable public file browsing.
 $enableSiteContact = 1; //set to 0 to disable.
 $enableThemeRotate = 1; //set to 0 to disable.
 
-
 /*
 Ultrose is copyright and wholly owned by Dan Nagle (http://dannagle.com/).
 It is MIT Licensed.
@@ -22,7 +21,7 @@ It is MIT Licensed.
 
 ===========================MIT LICENSE================================================
 
-Copyright (c) 2012 Dan Nagle (http://dannagle.com)
+Copyright (c) 2012, 2013 Dan Nagle (http://DanNagle.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files (the "Software"), to deal in the Software
@@ -49,17 +48,28 @@ GPLv3 licensed was removed. Ultrose is now MIT-only.
 */
 
 global $title, $slogan, $desciption, $yourname,
-    $email, $baseurl, $filetypes;
+    $email, $baseurl, $filetypes, $galleryExtensions, $galleryEnable,
+    $galleryThumbsDatabase;
 
 // Basic configuration 
 $title = "Ultrose";
-$slogan = "File Manager";
+$slogan = "Gallery & File Manager";
 $desciption = "Your Description"; //What shows up on Google
 $yourname = "You";
 $email = "you@example.com"; //site contact email
 
 $password = "password";
 $copyright = $yourname; 
+
+
+
+/*
+Ultrose will use a "gallery mode" to display images.
+You can disable this feature.
+*/
+$galleryEnable = 1; 
+$galleryExtensions = array("png", "gif", "jpeg", "jpg"); //What extensions are images?
+$galleryThumbsDatabase = "thumbnails"; //Ultrose will generate thumbnails in this directory.
 
 /*
 If you wish to have a little splash blurb on first arrival, put it here. Otherwise, leave blank.
@@ -74,7 +84,6 @@ ULTROSECONTENT;
 $landingBanner = <<<ULTROSECONTENT
 <center>
 This is Ultrose, the completely free web file manager.
-<br><br>It is available for download.
 <br><br>
 <span class="ui-state-highlight ui-corner-all" style="padding: 0pt 0.7em;"> 
 <a href="https://github.com/dannagle/Ultrose"><big><b>Download Ultrose from GitHub!</b></big></a>
@@ -126,7 +135,7 @@ Your content starts and stops with the key ULTROSECONTENT
 
 
 $navbarlinks[] = <<<ULTROSECONTENT
-<a href="http://ultrose.com/">Ultrose</a>
+<a href="https://github.com/dannagle/Ultrose">Ultrose</a>
 ULTROSECONTENT;
 
 $navbarlinks[] = <<<ULTROSECONTENT
@@ -179,7 +188,8 @@ ULTROSECONTENT;
 
 $loggedIn = false;
 $error = false;
-$success = false; 
+$success = false;
+$forcelogout = false;
 
 if ($enableLogin == false)
 {
@@ -255,42 +265,45 @@ if(!$loggedIn && trim($landingBanner) != "")
 }
 
 
-
-
-if(isset($_POST['password']) && $enableLogin)
-{
-    if($password == $_POST['password'])
-    {
-        setcookie("password", md5($_POST['password'] +"salt"), time()+432000);  // expire in 5 days
-        $loggedIn = true;
-        $success = "Login Successful";
-
-    } else {
-        $error = "Bad password.";
-    }
-    
-} else {
-    
-    if(isset($_COOKIE['password']))
-    {
-        
-        if($_COOKIE['password'] == md5($password +"salt") && $enableLogin)
-        {
-            $loggedIn = true;
-        }
-        
-    }
-    
-}
-
 if($pagerequest == "logout")
 {
     setcookie("password", "", time()-1000);  // force expire
     $loggedIn = false;
     $success = "You are now logged out."; 
     $pagerequest = "files";
+    $forcelogout = true;
           
 }
+
+if(!$forcelogout)
+{
+    if(isset($_POST['password']) && $enableLogin)
+    {
+        if($password == $_POST['password'])
+        {
+            setcookie("password", sha1($_POST['password'] +"salt"), time()+432000);  // expire in 5 days
+            $loggedIn = true;
+            $success = "Login Successful";
+    
+        } else {
+            $error = "Bad password.";
+        }
+        
+    } else {
+        
+        if(isset($_COOKIE['password']))
+        {
+            
+            if($_COOKIE['password'] == sha1($password +"salt") && $enableLogin)
+            {
+                $loggedIn = true;
+            }
+            
+        }
+        
+    }   
+}
+
 
 
 if (!empty($_FILES) && $loggedIn)
@@ -321,7 +334,7 @@ if(isset($_POST['command']) && $loggedIn)
     $from = ($_POST['from']);
     $to = ($_POST['to']);
     
-    //still need to add directory creation.
+    //TODO add directory creation.
     
     
     if($_POST['command'] == "move")
@@ -359,7 +372,7 @@ if(isset($_POST['command']) && $loggedIn)
 <head>
 <title><?php echo htmlspecialchars($title." | ".$slogan); ?></title>
 <META NAME="DESCRIPTION" CONTENT="<?php echo $desciption; ?>">
-<META NAME="Generator" CONTENT="Ultrose 1.3">
+<META NAME="Generator" CONTENT="Ultrose 1.4">
     
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" 
@@ -868,7 +881,7 @@ type="password"
            ?>
            style="float:right;" class="fg-button 
 ui-state-default
-            fg-button-icon-solo  ui-corner-all" title="RSS">
+            fg-button-icon-solo  ui-corner-all" title="Login/Logout">
             <span class="ui-icon ui-icon-person"></span> Login</a>
 
          
@@ -909,7 +922,7 @@ ui-state-default
          <div id="main" class="ui-corner-all">
           <?php
           
-          $categories = array();
+          
           
           
           if(($enableFileBrowser && ($pagerequest == "files"))
@@ -997,20 +1010,25 @@ echo format_bytes(disk_free_space("/"));?>
                 $directory = ".";
             }
             $directoryContents = directoryContents($directory);
-            
-            echo "<table ";
             if($loggedIn)
             {
-                echo "width='100%' ";
-            } else {
-                echo "width='75%' ";
+                $galleryEnable = 0;
             }
+            
+            
+            echo "<table width='100%' ";
             echo " cellspacing='0' cellpadding='0' border='0'>";
             
             $rowcounter = 0 ;
             $highlightclass = "ui-state-highlight";
             foreach($directoryContents['directories'] as $dir)
             {
+
+                if(strtolower($galleryThumbsDatabase) == strtolower($dir) && !$loggedIn)
+                {
+                    continue;
+                }
+                    
                 $rowcounter++;
                 echo "<tr style='font-size: 15pt;' ";
                 if($rowcounter % 2)
@@ -1027,13 +1045,40 @@ echo format_bytes(disk_free_space("/"));?>
                 if($loggedIn)
                 {
                     echo "<td></td>";
+                    echo "<td></td>";
                 }
                 echo "</tr>";
+                
+            }
+
+             
+            if($galleryEnable && !empty($directoryContents['images']))
+            {
+                genThumbs($directory, $directoryContents['images']);
+                echo "<tr><td colspan='3'><br>";
+                
+                foreach($directoryContents['images'] as $file)
+                {
+                    $rawfile = $directory."/".$file;
+                    echo "\n<div style='float:left;font-size:10pt;padding-left:10px;'><center><a href='$rawfile'><img src='".thumbLocation($rawfile)."' ></a><br>";
+                    echo $file."<br>";
+                    echo "(".date($datetimestring, filemtime($rawfile)) .")";
+                    echo "</center><br></div>";
+                    
+                }
+                
+                $rowcounter = 0;
+                
+                echo "</td></tr>";
                 
             }
             
             foreach($directoryContents['files'] as $file)
             {
+                if(in_array($file, $directoryContents['images']) && $galleryEnable) //already displayed
+                {
+                    continue;
+                }
 
                 if(!$loggedIn)
                 {
@@ -1047,6 +1092,7 @@ echo format_bytes(disk_free_space("/"));?>
 
 
                 $filesize = format_bytes(sprintf("%u", filesize($directory."/".$file)));
+                $modified = date($datetimestring, filemtime($directory."/".$file));
                 
 
                 $rowcounter++;
@@ -1063,6 +1109,7 @@ echo format_bytes(disk_free_space("/"));?>
                 </td><td>$filesize</td>";
                 if($loggedIn)
                 {
+                    echo "</td><td>$modified</td>"; 
                     $rawfile = $directory."/".$file;
                     ?>
                     <td><div class="fg-buttonset  ui-helper-clearfix" style="float:right;">
@@ -1239,7 +1286,8 @@ function mailer($to, $fromname, $fromemail, $subject, $themessage)
 
 function directoryContents($directory)
 {
-    global $title, $slogan, $desciption, $yourname, $email, $baseurl, $filetypes;
+    global $title, $slogan, $desciption, $yourname, $email, $baseurl, $filetypes,
+    $galleryExtensions, $galleryEnable, $galleryThumbsDatabase;
 
     // open this directory
     $myDirectory = opendir($directory);
@@ -1249,11 +1297,14 @@ function directoryContents($directory)
         $dirArray[] = $entryName;
     }
     
+    natcasesort($dirArray); //sort by name, naturally (1, 2, 10, 11, etc)
+    
     // close directory
     closedir($myDirectory);
     
     $directoryContents = array("files", "directories");
     $directoryContents['files'] = array();
+    $directoryContents['images'] = array();
     $directoryContents['directories'] = array();
 
     foreach($dirArray as $file)
@@ -1270,12 +1321,115 @@ function directoryContents($directory)
             
         } else {
             $directoryContents['files'][] = $file;
+            $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+            if(in_array($extension, $galleryExtensions) && $galleryEnable)
+            {
+                $directoryContents['images'][] = $file;
+            }
             
         }
+    }
+    if(strtolower($galleryThumbsDatabase) == strtolower($directory))
+    {
+        $galleryEnable = 0;
     }
     
     return $directoryContents;
     
+}
+
+function genThumb($file, $savepath)
+{
+    
+    $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    
+    switch($extension)
+    {
+        case "png":
+            $img = imagecreatefrompng( $file );
+            
+            break;
+        case "jpg":
+        case "jpeg":
+            $img = imagecreatefromjpeg( $file );
+            
+            break;
+        case "gif":
+            $img = imagecreatefromgif( $file );
+            
+            break;
+        
+    }
+    $width = imagesx( $img );
+    $height = imagesy( $img );
+    
+    $thumbWidth = 150;
+    if($thumbWidth > $width)
+    {
+        $thumbWidth = $width;
+    }
+    $thumbHeight = floor( $height * ( $thumbWidth / $width ) );
+
+    // Don't resize if new height/width would be greater thant thumb
+    if($thumbWidth > $width && $thumbHeight > $height )
+    {
+        $thumbHeight = $height;
+        $thumbWidth = $width;
+    }
+
+    $thumbImg =  imagecreatetruecolor($thumbWidth, $thumbHeight);
+    $white = imagecolorallocate($thumbImg, 255, 255, 255);
+    imagefill($thumbImg, 0, 0, $white);
+    
+    
+    imagecopyresized( $thumbImg, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $width, $height );
+    
+    // save thumbnail into a file
+    imagejpeg( $thumbImg, $savepath);    
+    
+    
+}
+
+function genThumbs($directory, $filesArray)
+{
+    global $galleryExtensions, $galleryEnable;
+    
+    if(!$galleryEnable) return;
+    
+    foreach($filesArray as $file)
+    {
+        $file = $directory."/".$file;
+        $genThumb = false;
+        $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        if(in_array($extension, $galleryExtensions))
+        {
+            $thumbFile = thumbLocation($file);
+            if(!file_exists($thumbFile))
+            {
+                $genThumb = true;
+            } else {
+                
+                if( filemtime($thumbFile) < filemtime($file))
+                {
+                    $genThumb = true;
+                }
+            }
+            if($genThumb)
+            {
+                genThumb($file, $thumbFile);
+            }
+        }        
+    }
+}
+
+function thumbLocation($file)
+{
+    global $galleryThumbsDatabase;
+    if(!file_exists($galleryThumbsDatabase))
+    {
+        mkdir($galleryThumbsDatabase);
+    }
+    return $galleryThumbsDatabase."/".md5($file).".jpg";
 }
 
 function trimDotsSlashes($string)
