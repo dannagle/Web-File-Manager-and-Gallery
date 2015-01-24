@@ -1,20 +1,20 @@
 #Ultrose
- 
+
 [Ultrose][ultrose_website] is a one-file file manager / browser.
 
 As a zero-install single file under 50 KB, you get:
 
 * Image Gallery (with thumbnail generation)
 * 24 Custom themes to choose from (including "random")
-* Emailer 
+* Emailer
 * Area for nav links
 * Public File Browser
 * Private File Manager (upload, delete, move)
-* No other files needed beyond index.php. 
+* No other files needed beyond index.php.
 
 ##Installation
 
-The only file you need `index.php`. Just drop it in a web server that supports PHP5+, and you are good to go! The jQuery libraries it uses are hosted by Google's public hosting services. 
+The only file you need `index.php`. Just drop it in a web server that supports PHP5+, and you are good to go! The jQuery libraries it uses are hosted by Google's public hosting services.
 
 
 ##Gallery
@@ -37,7 +37,7 @@ The first 180 lines of code is the best documenation. You can enable/disable log
 
 ##Credits
 
-Copyright (c) 2012, 2013 [Dan Nagle][personal_site] 
+Copyright (c) 2012-2015 [Dan Nagle][personal_site] 
 
 [ultrose_website]: http://ultrose.com
 [personal_site]: http://dannagle.com
