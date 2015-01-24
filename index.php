@@ -1,6 +1,6 @@
 <?php
 /*
-Ultrose Gallery & File Manager 
+Ultrose Gallery & File Manager
 
 Installation:
 
@@ -21,7 +21,7 @@ It is MIT Licensed.
 
 ===========================MIT LICENSE================================================
 
-Copyright (c) 2012, 2013 Dan Nagle (http://DanNagle.com)
+Copyright (c) 2012-2015  Dan Nagle (http://DanNagle.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files (the "Software"), to deal in the Software
@@ -51,7 +51,7 @@ global $title, $slogan, $desciption, $yourname,
     $email, $baseurl, $filetypes, $galleryExtensions, $galleryEnable,
     $galleryThumbsDatabase;
 
-// Basic configuration 
+// Basic configuration
 $title = "Ultrose";
 $slogan = "Gallery & File Manager";
 $desciption = "Your Description"; //What shows up on Google
@@ -59,7 +59,7 @@ $yourname = "You";
 $email = "you@example.com"; //site contact email
 
 $password = "password";
-$copyright = $yourname; 
+$copyright = $yourname;
 
 
 
@@ -67,13 +67,13 @@ $copyright = $yourname;
 Ultrose will use a "gallery mode" to display images.
 You can disable this feature.
 */
-$galleryEnable = 1; 
+$galleryEnable = 1;
 $galleryExtensions = array("png", "gif", "jpeg", "jpg"); //What extensions are images?
 $galleryThumbsDatabase = "thumbnails"; //Ultrose will generate thumbnails in this directory.
 
 /*
 If you wish to have a little splash blurb on first arrival, put it here. Otherwise, leave blank.
-  
+
 Your content starts and stops with the key ULTROSECONTENT
 */
 $landingBanner = <<<ULTROSECONTENT
@@ -85,7 +85,7 @@ $landingBanner = <<<ULTROSECONTENT
 <center>
 This is Ultrose, the completely free web file manager.
 <br><br>
-<span class="ui-state-highlight ui-corner-all" style="padding: 0pt 0.7em;"> 
+<span class="ui-state-highlight ui-corner-all" style="padding: 0pt 0.7em;">
 <a href="https://github.com/dannagle/Ultrose"><big><b>Download Ultrose from GitHub!</b></big></a>
 </span>
 </center>
@@ -102,13 +102,13 @@ $theme = "pepper-grinder";
 
 //I recommend you put a real base url instead of using my calculation
 //Use a trailing slash.
-//Example: "http://example.com/ultrose/"; 
-//Example: "http://ultrose.com/"; 
+//Example: "http://example.com/ultrose/";
+//Example: "http://ultrose.com/";
 $baseurl = getBaseUrl();
 
 
 //public file browser does not allow uploads
- 
+
 //browseable file types (when not logged in)
 $filetypes = "7z tar gz txt zip exe dmg pdf doc docx
             xls xlsx mp3 mpg ogg flv msi wav png gif
@@ -122,15 +122,15 @@ $datetimestring = "M j, Y";
 
 
 /*
- 
+
 Copy-paste then modify nav template to add your own links.
- 
+
 $navbarlinks[] = <<<ULTROSECONTENT
 Your link goes here.
 ULTROSECONTENT;
 
 Your content starts and stops with the key ULTROSECONTENT
- 
+
 */
 
 
@@ -172,7 +172,7 @@ $themes[] = "swanky-purse";
 
 
 
-//This will be outputted just before </body> 
+//This will be outputted just before </body>
 //Intended for Google Analytics, but it could used be any footer tracking code.
 $GoogleAnalyticsCode = <<<ULTROSECONTENT
 ULTROSECONTENT;
@@ -221,12 +221,12 @@ if(isset($_REQUEST['theme']) && $enableThemeRotate)
     if(isset($_GET['theme']))
     {
         $testtheme = strtolower(trim($_GET['theme']));
-        
+
     } else {
         $testtheme = strtolower(trim($_REQUEST['theme']));
     }
     $testchoosetheme = array_search($testtheme, $themes);
-    
+
     if($testchoosetheme !== false)
     {
         $theme = $testtheme;
@@ -237,7 +237,7 @@ if(isset($_REQUEST['theme']) && $enableThemeRotate)
         $error = "Theme not available";
         setcookie("theme", $testtheme, time() - 500);
     }
-    
+
      //choosetheme
 }
 
@@ -245,7 +245,7 @@ $pagerequest = false;
 if(isset($_REQUEST['page']))
 {
     $pagerequest = $_REQUEST['page'];
-    
+
 } else {
     $pagerequest = "files";
 }
@@ -261,7 +261,7 @@ if(!$loggedIn && trim($landingBanner) != "")
         $success = $landingBanner;
         $_SESSION['bannershown'] = true;
     }
-    
+
 }
 
 
@@ -269,10 +269,10 @@ if($pagerequest == "logout")
 {
     setcookie("password", "", time()-1000);  // force expire
     $loggedIn = false;
-    $success = "You are now logged out."; 
+    $success = "You are now logged out.";
     $pagerequest = "files";
     $forcelogout = true;
-          
+
 }
 
 if(!$forcelogout)
@@ -284,43 +284,43 @@ if(!$forcelogout)
             setcookie("password", sha1($_POST['password'] +"salt"), time()+432000);  // expire in 5 days
             $loggedIn = true;
             $success = "Login Successful";
-    
+
         } else {
             $error = "Bad password.";
         }
-        
+
     } else {
-        
+
         if(isset($_COOKIE['password']))
         {
-            
+
             if($_COOKIE['password'] == sha1($password +"salt") && $enableLogin)
             {
                 $loggedIn = true;
             }
-            
+
         }
-        
-    }   
+
+    }
 }
 
 
 
 if (!empty($_FILES) && $loggedIn)
 {
-    
+
     if($loggedIn && isset($_REQUEST['directory']))
     {
         $directory = "./".trimDotsSlashes($_REQUEST['directory']);
-        if (!move_uploaded_file($_FILES["uploadfile"]["tmp_name"], 
+        if (!move_uploaded_file($_FILES["uploadfile"]["tmp_name"],
 $directory."/".$_FILES["uploadfile"]["name"]))
         {
             $error="Error uploading file, message=" . print_r(error_get_last());;
-            
+
         } else {
-            $success = "Sucessfully uploaded ".trimDotsSlashes($directory."/".$_FILES["uploadfile"]["name"]); 
+            $success = "Sucessfully uploaded ".trimDotsSlashes($directory."/".$_FILES["uploadfile"]["name"]);
         }
-        
+
 
     }
 
@@ -333,20 +333,20 @@ if(isset($_POST['command']) && $loggedIn)
     //prevent going back directories.
     $from = ($_POST['from']);
     $to = ($_POST['to']);
-    
+
     //TODO add directory creation.
-    
-    
+
+
     if($_POST['command'] == "move")
     {
-        
+
         if(@rename($from, $to) === false)
         {
             echo "Error, message=".print_r(error_get_last());
         }
         exit;
     }
-    
+
     if($_POST['command'] == "delete")
     {
         if(@unlink($from) === false)
@@ -355,7 +355,7 @@ if(isset($_POST['command']) && $loggedIn)
         }
         exit;
     }
-    
+
     if($_POST['command'] == "copy")
     {
         if (@copy($from, $to) === false)
@@ -372,10 +372,10 @@ if(isset($_POST['command']) && $loggedIn)
 <head>
 <title><?php echo htmlspecialchars($title." | ".$slogan); ?></title>
 <META NAME="DESCRIPTION" CONTENT="<?php echo $desciption; ?>">
-<META NAME="Generator" CONTENT="Ultrose 1.4">
-    
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" 
+<META NAME="Generator" CONTENT="Ultrose 1.5">
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"
 type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -394,7 +394,7 @@ $(document).ready(function(){
 	});
 
 
-    $(".movebutton").click(function () { 
+    $(".movebutton").click(function () {
 
         var move = prompt("Move/Rename to where?",$(this).attr("title"));
         if (move)
@@ -406,16 +406,16 @@ $(document).ready(function(){
                     alert(data);
                 } else {
                     location.reload(true);
-                    
+
                 }
           });
-          
+
         }
 
     });
-    $(".deletebutton").click(function () { 
-    
-        var yes = confirm('Delete ' + $(this).attr("title") + '?'); 
+    $(".deletebutton").click(function () {
+
+        var yes = confirm('Delete ' + $(this).attr("title") + '?');
         if(yes)
         {
             $.post("<?php echo $baseurl;?>", { command: "delete", from: $(this).attr("title")},
@@ -425,13 +425,13 @@ $(document).ready(function(){
                       alert(data);
                   } else {
                       location.reload(true);
-                      
+
                   }
             });
-        
+
         }
     });
-    $(".copybutton").click(function () { 
+    $(".copybutton").click(function () {
 
         var move = prompt("Copy to where?",$(this).attr("title"));
         if (move)
@@ -443,28 +443,28 @@ $(document).ready(function(){
                     alert(data);
                 } else {
                     location.reload(true);
-                    
+
                 }
           });
-          
+
         }
 
     });
 
-    $("#loginlink").click(function () { 
+    $("#loginlink").click(function () {
     $("#loginblock").dialog({
         height: 300,
         width: 400,
         modal:true,
 		hide: 'fade',
-        
+
         buttons: {
-			"Login": function() { 
-				$("#loginform").submit(); 
-			}, 
-			"Cancel": function() { 
-				$(this).dialog("close"); 
-			} 
+			"Login": function() {
+				$("#loginform").submit();
+			},
+			"Cancel": function() {
+				$(this).dialog("close");
+			}
 		}
         });
         return false;
@@ -472,17 +472,17 @@ $(document).ready(function(){
 
     //hover states on the static widgets
 	$('.fg-button-icon-solo, .fg-button').hover(
-		function() { $(this).addClass('ui-state-hover'); }, 
+		function() { $(this).addClass('ui-state-hover'); },
 		function() { $(this).removeClass('ui-state-hover'); }
 	);
 
-    
-    
+
+
 });
 
 </script>
 
-<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/<?php echo 
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/<?php echo
 $theme;?>/jquery-ui.css" type="text/css" />
 
 
@@ -518,7 +518,7 @@ body, html {
 }
 <?php
 
-//My own personal tweaking... 
+//My own personal tweaking...
 
 
 
@@ -759,33 +759,33 @@ h2 {
 #footer {
     font-size:12px;
     margin:0px;
-    
+
 }
 * html #footer {
     height:1px;
 }
 
 </style>
-<style type="text/css">	
+<style type="text/css">
 	.fg-button { outline: 0; margin:0 2px 0 0; padding: 0.2em 0.7em;
         text-decoration:none !important; cursor:pointer;
         position: relative; text-align: center; zoom: 1; }
 	.fg-button .ui-icon { position: absolute; top: 50%; margin-top: -8px; left: 50%; margin-left: -8px; }
-	
+
 	a.fg-button { float:left; }
-	
+
 	/* remove extra button width in IE */
 	button.fg-button { width:auto; overflow:visible; }
-	
-	
-	.fg-button-icon-solo { display:block; width:8px; height:20px; width:20px; text-indent: -9999px; }	 
-/* solo icon buttons must have block properties for the text-indent to work */	
-	
+
+
+	.fg-button-icon-solo { display:block; width:8px; height:20px; width:20px; text-indent: -9999px; }
+/* solo icon buttons must have block properties for the text-indent to work */
+
 	.fg-buttonset { float:left; }
 	.fg-buttonset .fg-button { float: left; }
-	.fg-buttonset-single .fg-button, 
+	.fg-buttonset-single .fg-button,
 	.fg-buttonset-multi .fg-button { margin-right: -1px;}
-	
+
 	.fg-toolbar { padding: .5em; margin: 0;   }
 	.fg-toolbar .fg-buttonset { margin-right:1.5em; padding-left: 1px; }
 
@@ -800,9 +800,9 @@ h2 {
     if($success !== false)
     {
         echo "<div class='errorblock' class='ui-widget'>
-				<div class='ui-state-highlight ui-corner-bottom' style='padding: 0pt 0.7em;'> 
-					<p><span class='ui-icon ui-icon-info' style='float: left; 
-margin-right: 0.3em;'></span> 
+				<div class='ui-state-highlight ui-corner-bottom' style='padding: 0pt 0.7em;'>
+					<p><span class='ui-icon ui-icon-info' style='float: left;
+margin-right: 0.3em;'></span>
 					$success
                     <br><a href='#' class='ui-icon ui-icon-circle-close successerrorclose' style='float: right;'></a>
 
@@ -816,9 +816,9 @@ margin-right: 0.3em;'></span>
     if($error !== false)
     {
         echo "<div class='errorblock' class='ui-widget'>
-				<div class='ui-state-error ui-corner-bottom' style='padding: 0pt 0.7em;'> 
-					<p><span class='ui-icon ui-icon-alert' style='float: left; 
-margin-right: 0.3em;'></span> 
+				<div class='ui-state-error ui-corner-bottom' style='padding: 0pt 0.7em;'>
+					<p><span class='ui-icon ui-icon-alert' style='float: left;
+margin-right: 0.3em;'></span>
 					$error
                     <br><a href='#' class='ui-icon ui-icon-circle-close successerrorclose' style='float: right;'></a>
                     </p>
@@ -827,26 +827,26 @@ margin-right: 0.3em;'></span>
 			</div>";
     }?>
 <br>
-    
+
 <div class="ui-widget-content ui-helper-hidden"></div>
-    
+
 <div id = 'loginblock' title="<?php echo $title;?> Login" class="ui-helper-hidden">
 
 <?php
     if($enableLogin)
     {
-?>        
+?>
     <form id="loginform" action="<?php echo $baseurl;?>" method="post">
     <br>
-     <p align="center">Password: &nbsp;&nbsp;&nbsp;<input name="password" id="user_password" value=""  
+     <p align="center">Password: &nbsp;&nbsp;&nbsp;<input name="password" id="user_password" value=""
 type="password"
               onblur="this.style.backgroundColor='#ffffff'" onfocus="this.style.backgroundColor='#FFFCD0'"
-              > 
+              >
      </p>
     </form>
-<?php        
+<?php
     } else {
-        ?><p align="center">Login disabled.</p><?php        
+        ?><p align="center">Login disabled.</p><?php
     }
 ?>
 
@@ -865,9 +865,9 @@ type="password"
            }
          }
 
-         
+
          ?>
-         
+
 
 		<a
            <?php
@@ -877,19 +877,19 @@ type="password"
            } else {
                 echo ' id="loginlink" href="#"  ' ;
            }
-           
+
            ?>
-           style="float:right;" class="fg-button 
+           style="float:right;" class="fg-button
 ui-state-default
             fg-button-icon-solo  ui-corner-all" title="Login/Logout">
             <span class="ui-icon ui-icon-person"></span> Login</a>
 
-         
+
          </div>
          <div id="nav" class = "nav">
                  <ul style="float:left;">
                   <?php
-                  
+
                 echo "<li><a href='$baseurl'>Home</a></li>";
                   foreach($navbarlinks as $navlink)
                   {
@@ -898,11 +898,11 @@ ui-state-default
                   if($enableSiteContact)
                   {
                     echo "<li><a href='$baseurl?page=contact'>Contact</a></li>";
-                    
+
                   }
                   if($enableThemeRotate)
                   {
-                    
+
                     echo "<li><a href='$baseurl?theme=";
                     if($choosetheme+1 >= count($themes))
                     {
@@ -910,27 +910,27 @@ ui-state-default
                     } else {
                         echo urlencode($themes[$choosetheme+1]);
                     }
-                        
+
                     echo "'>Next Theme</a></li>";
-                    
+
                   }
                   ?>
 
                  </ul>
- 
+
          </div>
          <div id="main" class="ui-corner-all">
           <?php
-          
-          
-          
-          
+
+
+
+
           if(($enableFileBrowser && ($pagerequest == "files"))
              || (($pagerequest == "files") && $loggedIn)
              )
           {
 
-            
+
             if(isset($_REQUEST['directory']))
             {
                     //sneaky up directory not allowed.
@@ -940,11 +940,11 @@ ui-state-default
                 } else {
                     $directory = $_REQUEST['directory'];
                 }
-                
+
             } else {
                 $directory = ".";
             }
-            
+
             $directory = trimDotsSlashes($directory);
 
 
@@ -955,7 +955,7 @@ ui-state-default
 <div class="fg-toolbar ui-widget-header ui-corner-all ui-helper-clearfix">
     <input  style="float:left;"  type="file" name="uploadfile" size="10">
 	<div class="fg-buttonset ui-helper-clearfix">
-		<a id="uploadbutton" style="float:left;" href="#" class="fg-button ui-state-default 
+		<a id="uploadbutton" style="float:left;" href="#" class="fg-button ui-state-default
 fg-button-icon-solo  ui-corner-all" title="Upload">
             <span class="ui-icon ui-icon-circle-arrow-n"></span> Upload</a>
         <input type="hidden" name="directory" value="<?php echo $directory;?>">
@@ -964,13 +964,13 @@ fg-button-icon-solo  ui-corner-all" title="Upload">
     </div>
         </form>
     <div style="float:right;">
-        Disk size: <?php echo  format_bytes(disk_total_space("/"));?>&nbsp;&nbsp;|&nbsp;&nbsp;Disk Free: <?php 
+        Disk size: <?php echo  format_bytes(disk_total_space("/"));?>&nbsp;&nbsp;|&nbsp;&nbsp;Disk Free: <?php
 echo format_bytes(disk_free_space("/"));?>
                 (<?php echo floor(((disk_free_space("/") / disk_total_space("/")) * 100));?>%)
         </div>
-    
+
 </div>
-         
+
          <?php
             }
 
@@ -978,18 +978,18 @@ echo format_bytes(disk_free_space("/"));?>
             echo "<h2>Path: ";
             $pathbreakdown = explode("/", $directory);
             $pathcounter = 0;
-            
-            
-            
+
+
+
             echo " <a href='$baseurl?page=files'>home</a>";
-            
-            
-            
-            
+
+
+
+
             for($i = 0; $i < count($pathbreakdown) && isset($_REQUEST['directory']); $i++)
             {
                 echo " / <a href='$baseurl?page=files&directory=";
-                
+
                 for($j = 0; $j <= $i; $j++)
                 {
                     echo trimDotsSlashes($pathbreakdown[$j]);
@@ -997,14 +997,14 @@ echo format_bytes(disk_free_space("/"));?>
                     {
                         echo "/";
                     }
-                    
+
                 }
                 echo "'>$pathbreakdown[$i]</a>";
             }
-            
+
             echo "</h2>";
 
-            
+
             if(trim($directory) == "")
             {
                 $directory = ".";
@@ -1014,11 +1014,11 @@ echo format_bytes(disk_free_space("/"));?>
             {
                 $galleryEnable = 0;
             }
-            
-            
+
+
             echo "<table width='100%' ";
             echo " cellspacing='0' cellpadding='0' border='0'>";
-            
+
             $rowcounter = 0 ;
             $highlightclass = "ui-state-highlight";
             foreach($directoryContents['directories'] as $dir)
@@ -1028,7 +1028,7 @@ echo format_bytes(disk_free_space("/"));?>
                 {
                     continue;
                 }
-                    
+
                 $rowcounter++;
                 echo "<tr style='font-size: 15pt;' ";
                 if($rowcounter % 2)
@@ -1041,22 +1041,22 @@ echo format_bytes(disk_free_space("/"));?>
                 echo "><td><span class='ui-icon ui-icon-folder-collapsed'></span></td><td>".
                 "<a href='$baseurl?page=files&directory=$newpath'>$dir</a>"
                 ."</td><td></td>";
-                
+
                 if($loggedIn)
                 {
                     echo "<td></td>";
                     echo "<td></td>";
                 }
                 echo "</tr>";
-                
+
             }
 
-             
+
             if($galleryEnable && !empty($directoryContents['images']))
             {
                 genThumbs($directory, $directoryContents['images']);
                 echo "<tr><td colspan='3'><br>";
-                
+
                 foreach($directoryContents['images'] as $file)
                 {
                     $rawfile = $directory."/".$file;
@@ -1064,15 +1064,15 @@ echo format_bytes(disk_free_space("/"));?>
                     echo $file."<br>";
                     echo "(".date($datetimestring, filemtime($rawfile)) .")";
                     echo "</center><br></div>";
-                    
+
                 }
-                
+
                 $rowcounter = 0;
-                
+
                 echo "</td></tr>";
-                
+
             }
-            
+
             foreach($directoryContents['files'] as $file)
             {
                 if(in_array($file, $directoryContents['images']) && $galleryEnable) //already displayed
@@ -1093,7 +1093,7 @@ echo format_bytes(disk_free_space("/"));?>
 
                 $filesize = format_bytes(sprintf("%u", filesize($directory."/".$file)));
                 $modified = date($datetimestring, filemtime($directory."/".$file));
-                
+
 
                 $rowcounter++;
                 echo "<tr style='font-size: 15pt;' ";
@@ -1104,26 +1104,26 @@ echo format_bytes(disk_free_space("/"));?>
 
                 $file = trimDotsSlashes($file);
                 $findslash = substr($baseurl,0, strrpos($baseurl,"/")+1);
-                
+
                 echo "><td></td><td><a href='$findslash".$directory."/$file'>$file</a>
                 </td><td>$filesize</td>";
                 if($loggedIn)
                 {
-                    echo "</td><td>$modified</td>"; 
+                    echo "</td><td>$modified</td>";
                     $rawfile = $directory."/".$file;
                     ?>
                     <td><div class="fg-buttonset  ui-helper-clearfix" style="float:right;">
-		<a href="#" title="<?php echo $rawfile; ?>"  class="fg-button ui-state-default 
+		<a href="#" title="<?php echo $rawfile; ?>"  class="fg-button ui-state-default
 fg-button-icon-solo  ui-corner-all deletebutton" title="Delete">
             <span class="ui-icon ui-icon-trash"></span> Delete</a>
-		<a href="#" title="<?php echo $rawfile; ?>" class="fg-button ui-state-default 
+		<a href="#" title="<?php echo $rawfile; ?>" class="fg-button ui-state-default
 fg-button-icon-solo  ui-corner-all movebutton" title="Move">
             <span class="ui-icon ui-icon-arrow-4"></span> Move</a>
-		<a href="#" title="<?php echo $rawfile; ?>" class="fg-button ui-state-default 
+		<a href="#" title="<?php echo $rawfile; ?>" class="fg-button ui-state-default
 fg-button-icon-solo  ui-corner-all copybutton" title="Copy">
             <span class="ui-icon ui-icon-copy"></span> Copy</a>
             <!--
-		<a href="#" title="<?php echo $rawfile; ?>"  class="fg-button ui-state-default 
+		<a href="#" title="<?php echo $rawfile; ?>"  class="fg-button ui-state-default
 fg-button-icon-solo
             ui-corner-all permissionsbutton" title="Permissions">
             <span class="ui-icon ui-icon-wrench"></span> Rename</a>
@@ -1132,21 +1132,21 @@ fg-button-icon-solo
 
                 <?php }
                 echo "</tr>";
-                
-                
-                
+
+
+
             }
             echo "</table>";
 
           }elseif ($loggedIn && ($pagerequest == "emailer"))
-          {?><form action="<?php echo $baseurl; ?>" method="post"> 
+          {?><form action="<?php echo $baseurl; ?>" method="post">
 
 <br>
 <table id="contact">
     <tr>
         <td>Name: </td><td><input type="text" name="name" size="40" value="<?php echo $yourname;?>"></td>
     </tr><tr>
-        <td>From Email: </td><td><input type="text" name="fromemail" size="40" value="<?php echo 
+        <td>From Email: </td><td><input type="text" name="fromemail" size="40" value="<?php echo
 $email;?>"></td>
     </tr><tr>
         <td>To Email: </td><td><input type="text" name="toemail" size="40" ></td>
@@ -1166,11 +1166,11 @@ $email;?>"></td>
     </tr>
 </table>
 </form><?php
-            
- 
+
+
           } elseif ($enableSiteContact && ($pagerequest == "contact"))
           {
-            ?><form action="<?php echo $baseurl; ?>" method="post"> 
+            ?><form action="<?php echo $baseurl; ?>" method="post">
 <br>
 <table id="contact">
     <tr>
@@ -1192,21 +1192,21 @@ $email;?>"></td>
     </tr>
 </table>
 </form>
-        
+
             <?php
-            
+
           } else {
-            
+
                 echo "<h2>Public Browsing Disabled.</h2> Log in to see files.<hr>";
           }
           ?>
           </div>
          <br>
          <div id="footer"class="ui-widget ui-corner-bottom"><br>
-            Copyright &copy; <?php echo date('Y'). " $copyright"; ?>, powered by <a 
+            Copyright &copy; <?php echo date('Y'). " $copyright"; ?>, powered by <a
 href="http://ultrose.com/">Ultrose</a>
          </div>
- 
+
  </div>
 <br>
 </div>
@@ -1230,24 +1230,24 @@ function getBaseUrl()
        {
             $url = "https://";
         }
-       
+
     } else {
         $url = "http://";
     }
-    
+
     $url = $url.$_SERVER['HTTP_HOST'];
 
-    
+
     $url = $url .  $_SERVER['REQUEST_URI'];
     $url = str_replace("?". $_SERVER['QUERY_STRING'], "", $url);
-    
+
     /*
-    
+
     echo $url;
     echo "<br><br>";
     print_r_html($_SERVER);exit;
     */
-    
+
     return $url;
 }
 
@@ -1291,17 +1291,17 @@ function directoryContents($directory)
 
     // open this directory
     $myDirectory = opendir($directory);
-    
+
     // get each entry
     while($entryName = readdir($myDirectory)) {
         $dirArray[] = $entryName;
     }
-    
+
     natcasesort($dirArray); //sort by name, naturally (1, 2, 10, 11, etc)
-    
+
     // close directory
     closedir($myDirectory);
-    
+
     $directoryContents = array("files", "directories");
     $directoryContents['files'] = array();
     $directoryContents['images'] = array();
@@ -1312,13 +1312,13 @@ function directoryContents($directory)
         if (substr($file, 0, 1) == ".")
         {
             continue;
-            
+
         }
         $filetype = filetype($directory."/".$file);
         if($filetype == "dir")
         {
-            $directoryContents['directories'][] = $file; 
-            
+            $directoryContents['directories'][] = $file;
+
         } else {
             $directoryContents['files'][] = $file;
             $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
@@ -1326,43 +1326,43 @@ function directoryContents($directory)
             {
                 $directoryContents['images'][] = $file;
             }
-            
+
         }
     }
     if(strtolower($galleryThumbsDatabase) == strtolower($directory))
     {
         $galleryEnable = 0;
     }
-    
+
     return $directoryContents;
-    
+
 }
 
 function genThumb($file, $savepath)
 {
-    
+
     $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-    
+
     switch($extension)
     {
         case "png":
             $img = imagecreatefrompng( $file );
-            
+
             break;
         case "jpg":
         case "jpeg":
             $img = imagecreatefromjpeg( $file );
-            
+
             break;
         case "gif":
             $img = imagecreatefromgif( $file );
-            
+
             break;
-        
+
     }
     $width = imagesx( $img );
     $height = imagesy( $img );
-    
+
     $thumbWidth = 150;
     if($thumbWidth > $width)
     {
@@ -1380,22 +1380,22 @@ function genThumb($file, $savepath)
     $thumbImg =  imagecreatetruecolor($thumbWidth, $thumbHeight);
     $white = imagecolorallocate($thumbImg, 255, 255, 255);
     imagefill($thumbImg, 0, 0, $white);
-    
-    
+
+
     imagecopyresized( $thumbImg, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $width, $height );
-    
+
     // save thumbnail into a file
-    imagejpeg( $thumbImg, $savepath);    
-    
-    
+    imagejpeg( $thumbImg, $savepath);
+
+
 }
 
 function genThumbs($directory, $filesArray)
 {
     global $galleryExtensions, $galleryEnable;
-    
+
     if(!$galleryEnable) return;
-    
+
     foreach($filesArray as $file)
     {
         $file = $directory."/".$file;
@@ -1408,7 +1408,7 @@ function genThumbs($directory, $filesArray)
             {
                 $genThumb = true;
             } else {
-                
+
                 if( filemtime($thumbFile) < filemtime($file))
                 {
                     $genThumb = true;
@@ -1418,7 +1418,7 @@ function genThumbs($directory, $filesArray)
             {
                 genThumb($file, $thumbFile);
             }
-        }        
+        }
     }
 }
 
@@ -1438,17 +1438,16 @@ function trimDotsSlashes($string)
     {
         $string = substr($string, 1);
     }
-    
+
     while(substr($string, strlen($string) - 1, strlen($string)) == "/")
     {
         $string = substr($string, 0, strlen($string) - 1);
     }
     return $string;
-    
+
 }
 
 
 
 
 ?>
-
