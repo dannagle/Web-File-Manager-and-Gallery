@@ -21,7 +21,7 @@ It is MIT Licensed.
 
 ===========================MIT LICENSE================================================
 
-Copyright (c) 2012-2015  Dan Nagle (http://DanNagle.com)
+Copyright (c) 2012-2016  Dan Nagle (http://DanNagle.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files (the "Software"), to deal in the Software
@@ -372,11 +372,10 @@ if(isset($_POST['command']) && $loggedIn)
 <head>
 <title><?php echo htmlspecialchars($title." | ".$slogan); ?></title>
 <META NAME="DESCRIPTION" CONTENT="<?php echo $desciption; ?>">
-<META NAME="Generator" CONTENT="Ultrose 1.6">
+<META NAME="Generator" CONTENT="Ultrose 1.7">
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"
-type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 
 <script type="text/javascript">
 
@@ -482,7 +481,7 @@ $(document).ready(function(){
 
 </script>
 
-<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/<?php echo
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/<?php echo
 $theme;?>/jquery-ui.css" type="text/css" />
 
 
