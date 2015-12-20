@@ -24,9 +24,9 @@ The gallery is triggered automatically for all images Ultrose sees in the direct
 The gallery can be disabled so images are listed as normal files.
 
 
-##Contact
+##Future
 
-Please open issues using GitHub. I don't have time for individual support, but I'll try to look at issue tickets as they appear. This project is considered feature complete for now.
+This project is considered feature complete. Open issues on GitHub if you have suggetions or bugs.
 
 ##Documentation
 
@@ -34,6 +34,7 @@ The first 180 lines of code is the best documenation. You can enable/disable log
 
 ##Credits
 
-Copyright (c) 2012-2016 [Dan Nagle][personal_site]
+Copyright (c) 2012-2016 [Dan Nagle][personal_site] - [@NagleCode][twitter_site]
 
 [personal_site]: http://dannagle.com
+[twitter_site]: https://twitter.com/NagleCode
