@@ -1,6 +1,6 @@
 <?php
 /*
-Ultrose Gallery & File Manager
+Web File Manager and Gallery
 
 Installation:
 

@@ -1,6 +1,8 @@
-#Ultrose
+#Web File Manager and Gallery
 
-Ultrose is a one-file file manager / browser.
+This project used to be named "Ultrose", so you may still see references to that name.
+
+This project is a one-file file manager / browser.
 
 As a zero-install single file under 50 KB, you get:
 
@@ -19,18 +21,18 @@ The only file you need `index.php`. Just drop it in a web server that supports P
 
 ##Gallery
 
-The gallery is triggered automatically for all images Ultrose sees in the directory. The default thumbnail directory is `thumbnails` and is hidden from users not logged in. This diretory and thumbnails will be created by Ultrose in the same directory as `index.php`. Thumbnails are generated as-needed when Ultrose sees an image file and when that image has been updated.
+The gallery is triggered automatically for all images it sees in the directory. The default thumbnail directory is `thumbnails` and is hidden from users not logged in. This directory and thumbnails will be created in the same directory as `index.php`. Thumbnails are generated as-needed when it sees an image file and when that image has been updated.
 
 The gallery can be disabled so images are listed as normal files.
 
 
 ##Future
 
-This project is considered feature complete. Open issues on GitHub if you have suggetions or bugs.
+This project is considered feature complete. Open issues on GitHub if you have suggestions or bugs.
 
 ##Documentation
 
-The first 180 lines of code is the best documenation. You can enable/disable login and file browsing
+The first 180 lines of code is the best documentation. You can enable/disable login and file browsing
 
 ##Credits
 
