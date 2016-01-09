@@ -15,7 +15,7 @@ $enableSiteContact = 1; //set to 0 to disable.
 $enableThemeRotate = 1; //set to 0 to disable.
 
 /*
-Ultrose is copyright and wholly owned by Dan Nagle (http://dannagle.com/).
+Web File Manager and Gallery is copyright and wholly owned by Dan Nagle (http://dannagle.com/).
 It is MIT Licensed.
 
 
@@ -43,7 +43,13 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ===========================================================================
 
-GPLv3 licensed was removed. Ultrose is now MIT-only.
+GPLv3 licensed was removed. Web File Manager and Gallery is now MIT-only.
+
+*/
+
+
+/*
+This project was called Ultrose, so you will likely still see that name.
 
 */
 
@@ -52,8 +58,8 @@ global $title, $slogan, $desciption, $yourname,
     $galleryThumbsDatabase;
 
 // Basic configuration
-$title = "Ultrose";
-$slogan = "Gallery & File Manager";
+$title = "Web File Manager";
+$slogan = "and Gallery";
 $desciption = "Your Description"; //What shows up on Google
 $yourname = "You";
 $email = "you@example.com"; //site contact email
@@ -62,6 +68,8 @@ $password = "password";
 $copyright = $yourname;
 
 
+//set timezone
+date_default_timezone_set("America/Chicago");
 
 /*
 Ultrose will use a "gallery mode" to display images.
@@ -102,8 +110,7 @@ $theme = "pepper-grinder";
 
 //I recommend you put a real base url instead of using my calculation
 //Use a trailing slash.
-//Example: "http://example.com/ultrose/";
-//Example: "http://ultrose.com/";
+//Example: "http://example.com/files/";
 $baseurl = getBaseUrl();
 
 
@@ -135,7 +142,7 @@ Your content starts and stops with the key ULTROSECONTENT
 
 
 $navbarlinks[] = <<<ULTROSECONTENT
-<a href="https://github.com/dannagle/Ultrose">Ultrose</a>
+<a href="https://github.com/dannagle/Web-File-Manager-and-Gallery">GitHub</a>
 ULTROSECONTENT;
 
 $navbarlinks[] = <<<ULTROSECONTENT
@@ -372,7 +379,7 @@ if(isset($_POST['command']) && $loggedIn)
 <head>
 <title><?php echo htmlspecialchars($title." | ".$slogan); ?></title>
 <META NAME="DESCRIPTION" CONTENT="<?php echo $desciption; ?>">
-<META NAME="Generator" CONTENT="Ultrose 1.7">
+<META NAME="Generator" CONTENT="GitHub.com/DanNagle">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
@@ -1203,7 +1210,7 @@ $email;?>"></td>
          <br>
          <div id="footer"class="ui-widget ui-corner-bottom"><br>
             Copyright &copy; <?php echo date('Y'). " $copyright"; ?>, powered by <a
-href="http://ultrose.com/">Ultrose</a>
+href="https://github.com/dannagle/">GitHub/dannagle</a>
          </div>
 
  </div>
