@@ -14,6 +14,8 @@ As a zero-install single file under 50 KB, you get:
 * Private File Manager (upload, delete, move)
 * No other files needed beyond index.php.
 
+![File manager screenshot](filemanagerscreenshot.png)
+
 ##Installation
 
 The only file you need `index.php`. Just drop it in a web server that supports PHP5+, and you are good to go! The jQuery libraries it uses are hosted by Google's public hosting services.
