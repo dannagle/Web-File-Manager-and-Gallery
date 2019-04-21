@@ -1,4 +1,9 @@
-#Web File Manager and Gallery
+This project is no longer being maintained.
+
+# Replacement Project
+Check out [Tiny File Manager](https://github.com/prasathmani/tinyfilemanager). It is a better single-file manager, and it is based on Bootstrap instead of jQuery UI. 
+
+## Web File Manager and Gallery
 
 This project used to be named "Ultrose", so you may still see references to that name.
 
@@ -16,23 +21,23 @@ As a zero-install single file under 50 KB, you get:
 
 ![File manager screenshot](filemanagerscreenshot.png)
 
-##Installation
+## Installation
 
 The only file you need `index.php`. Just drop it in a web server that supports PHP5+, and you are good to go! The jQuery libraries it uses are hosted by Google's public hosting services.
 
 
-##Gallery
+## Gallery
 
 The gallery is triggered automatically for all images it sees in the directory. The default thumbnail directory is `thumbnails` and is hidden from users not logged in. This directory and thumbnails will be created in the same directory as `index.php`. Thumbnails are generated as-needed when it sees an image file and when that image has been updated.
 
 The gallery can be disabled so images are listed as normal files.
 
 
-##Future
+## Future
 
 This project is considered feature complete. Open issues on GitHub if you have suggestions or bugs.
 
-##Documentation
+## Documentation
 
 The first 180 lines of code is the best documentation. You can enable/disable login and file browsing
 
